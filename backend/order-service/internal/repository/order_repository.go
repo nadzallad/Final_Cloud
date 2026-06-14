@@ -1,40 +1,37 @@
 package repository
 
 import (
-	"context"
+	"order-service/internal/entity"
 
-	"github.com/jackc/pgx/v5/pgxpool"
+	"gorm.io/gorm"
 )
 
 type OrderRepository struct {
-	DB *pgxpool.Pool
+	DB *gorm.DB
 }
 
-func NewOrderRepository(
-	db *pgxpool.Pool,
-) *OrderRepository {
-	return &OrderRepository{
-		DB: db,
-	}
+func NewOrderRepository(db *gorm.DB) *OrderRepository {
+	return &OrderRepository{DB: db}
 }
 
-func (r *OrderRepository) UpdateStatus(
-	orderID int,
-	status string,
-) error {
+func (r *OrderRepository) Create(order *entity.Order) error {
+	return r.DB.Create(order).Error
+}
 
-	query := `
-	UPDATE orders
-	SET status=$1
-	WHERE order_id=$2
-	`
+func (r *OrderRepository) FindAll() ([]entity.Order, error) {
+	var orders []entity.Order
+	err := r.DB.Find(&orders).Error
+	return orders, err
+}
 
-	_, err := r.DB.Exec(
-		context.Background(),
-		query,
-		status,
-		orderID,
-	)
+func (r *OrderRepository) FindByID(orderID int) (*entity.Order, error) {
+	var order entity.Order
+	err := r.DB.Where("order_id = ?", orderID).First(&order).Error
+	return &order, err
+}
 
-	return err
+func (r *OrderRepository) UpdateStatus(orderID int, status string) error {
+	return r.DB.Model(&entity.Order{}).
+		Where("order_id = ?", orderID).
+		Update("status", status).Error
 }
