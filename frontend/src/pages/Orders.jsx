@@ -11,7 +11,7 @@ function Orders() {
 
   const loadOrders = async () => {
     try {
-      const res = await orderService.getOrders();
+      const res = await getOrders();
       setOrders(res.data);
     } catch (err) {
       console.log(err);
@@ -21,41 +21,54 @@ function Orders() {
   return (
     <>
       <Navbar />
-
       <div style={{ padding: "20px" }}>
         <h1>Orders</h1>
-
-        <table border="1" cellPadding="10">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Sender</th>
-              <th>Receiver</th>
-              <th>Item</th>
-              <th>Weight</th>
-              <th>Origin</th>
-              <th>Destination</th>
-              <th>Total</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {orders.map((o) => (
-              <tr key={o.order_id}>
-                <td>{o.order_id}</td>
-                <td>{o.sender_name}</td>
-                <td>{o.receiver_name}</td>
-                <td>{o.item_name}</td>
-                <td>{o.weight_kg}</td>
-                <td>{o.origin_city}</td>
-                <td>{o.destination_city}</td>
-                <td>{o.total_price}</td>
-                <td>{o.status}</td>
+        {orders.length === 0 ? (
+          <p>Belum ada order.</p>
+        ) : (
+          <table border="1" cellPadding="10" style={{ width: "100%", borderCollapse: "collapse" }}>
+            <thead style={{ backgroundColor: "#c0392b", color: "white" }}>
+              <tr>
+                <th>ID</th>
+                <th>Pengirim</th>
+                <th>Penerima</th>
+                <th>Barang</th>
+                <th>Berat</th>
+                <th>Asal</th>
+                <th>Tujuan</th>
+                <th>Jarak</th>
+                <th>Ongkir</th>
+                <th>Status</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {orders.map((o) => (
+                <tr key={o.order_id}>
+                  <td>{o.order_id}</td>
+                  <td>{o.sender_name}</td>
+                  <td>{o.receiver_name}</td>
+                  <td>{o.item_name}</td>
+                  <td>{o.weight_kg} kg</td>
+                  <td>{o.origin_city}</td>
+                  <td>{o.destination_city}</td>
+                  <td>{o.distance_km} km</td>
+                  <td>Rp {o.shipping_cost?.toLocaleString("id-ID")}</td>
+                  <td>
+                    <span style={{
+                      padding: "4px 8px",
+                      borderRadius: "4px",
+                      backgroundColor: o.status === "PAID" ? "#27ae60" : "#e67e22",
+                      color: "white",
+                      fontSize: "12px"
+                    }}>
+                      {o.status}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </>
   );
