@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getOrders } from "../services/orderApi";
+import { getOrders } from "../services/orderService";
 import Navbar from "../components/Navbar";
 
 function Orders() {
@@ -11,7 +11,7 @@ function Orders() {
 
   const loadOrders = async () => {
     try {
-      const res = await getOrders();
+      const res = await orderService.getOrders();
       setOrders(res.data);
     } catch (err) {
       console.log(err);

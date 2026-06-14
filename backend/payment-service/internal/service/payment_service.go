@@ -12,38 +12,86 @@ import (
 )
 
 type PaymentService struct {
-	Repo      *repository.PaymentRepository
-	Publisher *rabbitmq.Publisher
+	repo      *repository.PaymentRepository
+	publisher *rabbitmq.Publisher
+}
+
+func NewPaymentService(
+	repo *repository.PaymentRepository,
+	publisher *rabbitmq.Publisher,
+) *PaymentService {
+
+	return &PaymentService{
+		repo:      repo,
+		publisher: publisher,
+	}
 }
 
 func (s *PaymentService) CreatePayment(
 	req dto.CreatePaymentRequest,
-) error {
+) (*entity.Payment, error) {
 
 	payment := entity.Payment{
-		PaymentID:     uuid.New(),
-		OrderID:       req.OrderID,
-		PaymentMethod: req.Method,
-		Total:         req.Total,
-		Status:        "PENDING",
-		CreatedAt:     time.Now(),
+		PaymentID: uuid.New(),
+
+		OrderID: req.OrderID,
+
+		Total: req.Total,
+
+		Discount: 0,
+
+		AdminFee: 0,
+
+		Status: "UNPAID",
+
+		PaymentMethod: req.PaymentMethod,
 	}
 
-	err := s.Repo.Create(payment)
+	err := s.repo.Create(&payment)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	event := map[string]interface{}{
-		"event": "payment.created",
-		"order_id": req.OrderID,
+	return &payment, nil
+}
+
+func (s *PaymentService) MarkAsPaid(
+	paymentID string,
+) (*entity.Payment, error) {
+
+	payment, err :=
+		s.repo.FindByID(paymentID)
+
+	if err != nil {
+		return nil, err
 	}
 
-	s.Publisher.Publish(
-		"payment.created",
-		event,
-	)
+	now := time.Now()
 
-	return nil
+	payment.Status = "PAID"
+	payment.PaidAt = &now
+
+	err = s.repo.Update(payment)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if s.publisher != nil {
+
+		err = s.publisher.Publish(
+			"payment.success",
+			map[string]interface{}{
+				"order_id": payment.OrderID,
+				"status":   "PAID",
+			},
+		)
+
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return payment, nil
 }

@@ -10,46 +10,76 @@ import (
 	"payment-service/internal/routes"
 	"payment-service/internal/service"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/rabbitmq/amqp091-go"
 )
 
 func main() {
 
-	db, err := config.ConnectDB()
+	config.ConnectDB()
 
-	if err != nil {
-		log.Fatal(err)
-	}
-
+	// RabbitMQ Connection
 	conn, err := amqp091.Dial(
-		"amqp://guest:guest@rabbitmq:5672/",
+		"amqp://guest:guest@localhost:5672/",
 	)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	ch, _ := conn.Channel()
+	defer conn.Close()
+
+	ch, err := conn.Channel()
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer ch.Close()
+
+	// Declare Queue
+	_, err = ch.QueueDeclare(
+		"payment.success",
+		true,
+		false,
+		false,
+		false,
+		nil,
+	)
+
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	publisher := &rabbitmq.Publisher{
 		Channel: ch,
 	}
 
-	repo := repository.NewPaymentRepository(db)
-
-	svc := &service.PaymentService{
-		Repo: repo,
-		Publisher: publisher,
-	}
-
-	h := &handler.PaymentHandler{
-		Service: svc,
-	}
-
 	router := gin.Default()
 
-	routes.RegisterRoutes(router, h)
+	router.Use(cors.Default())
+
+	paymentRepo :=
+		repository.NewPaymentRepository(
+			config.DB,
+		)
+
+	paymentService :=
+		service.NewPaymentService(
+			paymentRepo,
+			publisher,
+		)
+
+	paymentHandler :=
+		handler.NewPaymentHandler(
+			paymentService,
+		)
+
+	routes.SetupRoutes(
+		router,
+		paymentHandler,
+	)
 
 	router.Run(":8082")
 }

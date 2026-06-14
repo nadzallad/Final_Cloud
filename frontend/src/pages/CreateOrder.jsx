@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import orderService from "../services/orderService";
+import { createOrder } from "../services/orderService";
 
 function CreateOrder() {
 
@@ -29,7 +29,9 @@ function CreateOrder() {
     origin_city: "",
     destination_city: "",
 
-    service_type: "EZ"
+    service_type: "EZ",
+
+    payment_method: "TRANSFER"
   });
 
   useEffect(() => {
@@ -67,9 +69,14 @@ function CreateOrder() {
 
   const handleChange = (e) => {
 
+    const value =
+      e.target.name === "weight_kg"
+        ? parseFloat(e.target.value)
+        : e.target.value;
+
     setForm({
       ...form,
-      [e.target.name]: e.target.value
+      [e.target.name]: value
     });
 
   };
@@ -82,7 +89,7 @@ function CreateOrder() {
 
       console.log(form);
 
-      await orderService.createOrder(form);
+      await createOrder(form);
 
       alert("Order berhasil dibuat");
 
@@ -90,13 +97,15 @@ function CreateOrder() {
 
     } catch (error) {
 
-      console.error(error);
+        console.error(error);
 
-      alert("Gagal membuat order");
+        alert(
+          error.response?.data?.error ||
+          error.message
+        );
+      }
 
-    }
-
-  };
+    };
 
   return (
 
@@ -295,7 +304,31 @@ function CreateOrder() {
             JND Next Day
           </option>
         </select>
+        <h3>Payment Information</h3>
 
+        <label>Payment Method</label>
+        <select
+          name="payment_method"
+          value={form.payment_method}
+          onChange={handleChange}
+          required
+        >
+          <option value="TRANSFER">
+            VA BCA
+          </option>
+
+          <option value="QRIS">
+            QRIS
+          </option>
+
+          <option value="EWALLET">
+            VA BRI
+          </option>
+
+          <option value="COD">
+            Cash On Delivery
+          </option>
+        </select>
         <button
           type="submit"
           className="btn-primary"

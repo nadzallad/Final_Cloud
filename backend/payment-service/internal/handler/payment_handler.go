@@ -10,16 +10,26 @@ import (
 )
 
 type PaymentHandler struct {
-	Service *service.PaymentService
+	service *service.PaymentService
 }
 
-func (h *PaymentHandler) Create(
+func NewPaymentHandler(
+	service *service.PaymentService,
+) *PaymentHandler {
+
+	return &PaymentHandler{
+		service: service,
+	}
+}
+
+func (h *PaymentHandler) CreatePayment(
 	c *gin.Context,
 ) {
 
 	var req dto.CreatePaymentRequest
 
-	if err := c.ShouldBindJSON(&req); err != nil {
+	if err :=
+		c.ShouldBindJSON(&req); err != nil {
 
 		c.JSON(
 			http.StatusBadRequest,
@@ -31,7 +41,8 @@ func (h *PaymentHandler) Create(
 		return
 	}
 
-	err := h.Service.CreatePayment(req)
+	payment, err :=
+		h.service.CreatePayment(req)
 
 	if err != nil {
 
@@ -47,8 +58,33 @@ func (h *PaymentHandler) Create(
 
 	c.JSON(
 		http.StatusCreated,
-		gin.H{
-			"message": "payment created",
-		},
+		payment,
 	)
+}
+
+func (h *PaymentHandler) Pay(
+    c *gin.Context,
+) {
+
+    id := c.Param("id")
+
+    payment, err :=
+        h.service.MarkAsPaid(id)
+
+    if err != nil {
+
+        c.JSON(
+            http.StatusBadRequest,
+            gin.H{
+                "error": err.Error(),
+            },
+        )
+
+        return
+    }
+
+    c.JSON(
+        http.StatusOK,
+        payment,
+    )
 }
