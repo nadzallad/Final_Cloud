@@ -69,9 +69,14 @@ function CreateOrder() {
 
   const handleChange = (e) => {
 
+    const value =
+      e.target.name === "weight_kg"
+        ? parseFloat(e.target.value)
+        : e.target.value;
+
     setForm({
       ...form,
-      [e.target.name]: e.target.value
+      [e.target.name]: value
     });
 
   };
@@ -92,13 +97,15 @@ function CreateOrder() {
 
     } catch (error) {
 
-      console.error(error);
+        console.error(error);
 
-      alert("Gagal membuat order");
+        alert(
+          error.response?.data?.error ||
+          error.message
+        );
+      }
 
-    }
-
-  };
+    };
 
   return (
 

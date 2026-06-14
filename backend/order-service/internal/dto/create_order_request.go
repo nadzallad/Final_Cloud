@@ -16,10 +16,10 @@ type CreateOrderRequest struct {
 
 	WeightKg float64 `json:"weight_kg"`
 
-	OriginCityID int `json:"origin_city_id"`
-	DestinationCityID int `json:"destination_city_id"`
+	OriginCity string `json:"origin_city"`
+	DestinationCity string `json:"destination_city"`
 
 	ServiceType string `json:"service_type"`
-	PaymentMethod string `json:"payment_method"`
 
+	PaymentMethod string `json:"payment_method"`
 }

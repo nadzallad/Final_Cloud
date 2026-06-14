@@ -60,28 +60,3 @@ func (h *OrderHandler) CreateOrder(
 		order,
 	)
 }
-
-func (h *OrderHandler) GetOrders(
-	c *gin.Context,
-) {
-
-	orders, err :=
-		h.service.GetOrders()
-
-	if err != nil {
-
-		c.JSON(
-			http.StatusInternalServerError,
-			gin.H{
-				"error": err.Error(),
-			},
-		)
-
-		return
-	}
-
-	c.JSON(
-		http.StatusOK,
-		orders,
-	)
-}
