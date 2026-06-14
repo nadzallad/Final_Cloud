@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"order-service/internal/dto"
 	"order-service/internal/service"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -45,17 +44,12 @@ func (h *OrderHandler) GetOrders(c *gin.Context) {
 
 func (h *OrderHandler) ConfirmPayment(c *gin.Context) {
 	idStr := c.Param("id")
-	orderID, err := strconv.Atoi(idStr)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid order id"})
-		return
-	}
 
-	err = h.OrderService.MarkAsPaid(orderID)
+	err := h.OrderService.MarkAsPaid(idStr)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "order marked as paid", "order_id": orderID})
+	c.JSON(http.StatusOK, gin.H{"message": "order marked as paid", "order_id": idStr})
 }

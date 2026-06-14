@@ -104,8 +104,12 @@ func (s *OrderService) GetAllOrders() ([]entity.Order, error) {
 	return s.OrderRepo.FindAll()
 }
 
-func (s *OrderService) MarkAsPaid(orderID int) error {
-	return s.OrderRepo.UpdateStatus(orderID, "PAID")
+func (s *OrderService) MarkAsPaid(orderID string) error {
+	id, err := strconv.Atoi(orderID)
+	if err != nil {
+		return err
+	}
+	return s.OrderRepo.UpdateStatus(id, "PAID")
 }
 
 func calculateShippingCost(weightKg float64, distanceKm float64, serviceType string) float64 {
