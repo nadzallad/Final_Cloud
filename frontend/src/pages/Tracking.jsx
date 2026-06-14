@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "./Tracking.css";
+import trackingService from "../services/trackingService";
 
 function Tracking() {
   const [formData, setFormData] = useState({
@@ -21,28 +22,21 @@ function Tracking() {
     e.preventDefault();
 
     try {
-      const response = await fetch(
-        "http://localhost:8087/tracking",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
+
+      await trackingService.createTracking(
+        formData
       );
 
-      if (response.ok) {
-        alert("Tracking berhasil disimpan!");
+      alert("Tracking berhasil disimpan!");
 
-        setFormData({
-          tracking_id: "",
-          no_resi: "",
-          status: "",
-          location: "",
-          note: "",
-        });
-      }
+      setFormData({
+        tracking_id: "",
+        no_resi: "",
+        status: "",
+        location: "",
+        note: "",
+      });
+
     } catch (error) {
       alert("Gagal menyimpan data");
       console.error(error);
