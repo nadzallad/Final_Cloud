@@ -1,11 +1,15 @@
 package service
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"math"
+	"net/http"
 	"order-service/internal/dto"
 	"order-service/internal/entity"
 	"order-service/internal/repository"
+	"strconv"
 )
 
 type OrderService struct {
@@ -66,6 +70,31 @@ func (s *OrderService) CreateOrder(req dto.CreateOrderRequest) (*entity.Order, e
 	err = s.OrderRepo.Create(order)
 	if err != nil {
 		return nil, err
+	}
+
+	// kirim ke Payment Service
+	paymentReq := map[string]interface{}{
+		"order_id":       strconv.Itoa(order.OrderID),
+		"payment_method": req.PaymentMethod,
+		"total":          totalPrice,
+	}
+
+	jsonData, _ := json.Marshal(paymentReq)
+
+	resp, err := http.Post(
+		"http://localhost:8082/payments",
+		"application/json",
+		bytes.NewBuffer(jsonData),
+	)
+
+	if err != nil {
+		// log error tapi jangan gagalkan order
+		fmt.Println("Warning: gagal kirim ke payment service:", err)
+	} else {
+		defer resp.Body.Close()
+		if resp.StatusCode != http.StatusCreated && resp.StatusCode != http.StatusOK {
+			fmt.Println("Warning: payment service returned status:", resp.StatusCode)
+		}
 	}
 
 	return order, nil
