@@ -10,7 +10,7 @@ import (
 )
 
 type PaymentSuccessEvent struct {
-	OrderID int `json:"order_id"`
+	OrderID string `json:"order_id"`
 }
 
 func ConsumePaymentSuccess(
@@ -38,15 +38,18 @@ func ConsumePaymentSuccess(
 
 			var event PaymentSuccessEvent
 
-			json.Unmarshal(
+			err := json.Unmarshal(
 				d.Body,
 				&event,
 			)
+
+			if err != nil {
+				continue
+			}
 
 			service.MarkAsPaid(
 				event.OrderID,
 			)
 		}
-
 	}()
 }

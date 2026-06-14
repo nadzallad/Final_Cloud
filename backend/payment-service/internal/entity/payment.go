@@ -7,21 +7,27 @@ import (
 )
 
 type Payment struct {
-	PaymentID uuid.UUID `json:"payment_id"`
+	PaymentID uuid.UUID `gorm:"column:payment_id;primaryKey"`
 
-	OrderID string `json:"order_id"`
+	OrderID string `gorm:"column:order_id"`
 
-	PaymentMethod string `json:"payment_method"`
+	PaymentMethod string `gorm:"column:payment_method"`
 
-	Total float64 `json:"total"`
+	Total float64 `gorm:"column:total"`
 
-	Discount float64 `json:"discount"`
+	Discount float64 `gorm:"column:discount"`
 
-	AdminFee float64 `json:"admin_fee"`
+	AdminFee float64 `gorm:"column:admin_fee"`
 
-	Status string `json:"status"`
+	Status string `gorm:"column:status"`
 
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt time.Time `gorm:"column:created_at"`
 
-	PaidAt *time.Time `json:"paid_at"`
+	PaidAt *time.Time `gorm:"column:paid_at"`
+
+	UpdatedAt time.Time `gorm:"column:updated_at"`
+}
+
+func (Payment) TableName() string {
+	return "payments"
 }

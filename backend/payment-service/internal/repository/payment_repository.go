@@ -1,51 +1,51 @@
 package repository
 
 import (
-	"context"
-
 	"payment-service/internal/entity"
 
-	"github.com/jackc/pgx/v5/pgxpool"
+	"gorm.io/gorm"
 )
 
 type PaymentRepository struct {
-	DB *pgxpool.Pool
+	db *gorm.DB
 }
 
-func NewPaymentRepository(db *pgxpool.Pool) *PaymentRepository {
-	return &PaymentRepository{DB: db}
+func NewPaymentRepository(
+	db *gorm.DB,
+) *PaymentRepository {
+
+	return &PaymentRepository{
+		db: db,
+	}
 }
 
 func (r *PaymentRepository) Create(
-	payment entity.Payment,
+	payment *entity.Payment,
 ) error {
 
-	query := `
-	INSERT INTO payments
-	(
-		payment_id,
-		order_id,
-		payment_method,
-		total,
-		discount,
-		admin_fee,
-		status
-	)
-	VALUES
-	($1,$2,$3,$4,$5,$6,$7)
-	`
+	return r.db.Create(payment).Error
+}
 
-	_, err := r.DB.Exec(
-		context.Background(),
-		query,
-		payment.PaymentID,
-		payment.OrderID,
-		payment.PaymentMethod,
-		payment.Total,
-		payment.Discount,
-		payment.AdminFee,
-		payment.Status,
-	)
+func (r *PaymentRepository) FindByID(
+	id string,
+) (*entity.Payment, error) {
 
-	return err
+	var payment entity.Payment
+
+	err := r.db.
+		Where("payment_id = ?", id).
+		First(&payment).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &payment, nil
+}
+
+func (r *PaymentRepository) Update(
+	payment *entity.Payment,
+) error {
+
+	return r.db.Save(payment).Error
 }

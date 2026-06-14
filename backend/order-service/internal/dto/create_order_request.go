@@ -20,4 +20,6 @@ type CreateOrderRequest struct {
 	DestinationCityID int `json:"destination_city_id"`
 
 	ServiceType string `json:"service_type"`
+	PaymentMethod string `json:"payment_method"`
+
 }
