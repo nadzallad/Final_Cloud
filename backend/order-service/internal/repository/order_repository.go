@@ -42,3 +42,12 @@ func (r *OrderRepository) CreateResi(orderID int, noResi string) error {
 		orderID, noResi,
 	).Error
 }
+
+func (r *OrderRepository) FindResiByOrderID(orderID int) (string, error) {
+	var noResi string
+	err := r.DB.Raw(
+		`SELECT no_resi FROM resi WHERE order_id = ? AND status = 'ACTIVE' LIMIT 1`,
+		orderID,
+	).Scan(&noResi).Error
+	return noResi, err
+}

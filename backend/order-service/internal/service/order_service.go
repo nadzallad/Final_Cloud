@@ -72,7 +72,6 @@ func (s *OrderService) CreateOrder(req dto.CreateOrderRequest) (*entity.Order, e
 		return nil, err
 	}
 
-	// kirim ke Payment Service
 	paymentReq := map[string]interface{}{
 		"order_id":       strconv.Itoa(order.OrderID),
 		"payment_method": req.PaymentMethod,
@@ -80,13 +79,11 @@ func (s *OrderService) CreateOrder(req dto.CreateOrderRequest) (*entity.Order, e
 	}
 
 	jsonData, _ := json.Marshal(paymentReq)
-
 	resp, err := http.Post(
 		"http://localhost:8082/payments",
 		"application/json",
 		bytes.NewBuffer(jsonData),
 	)
-
 	if err != nil {
 		fmt.Println("Warning: gagal kirim ke payment service:", err)
 	} else {
@@ -114,7 +111,6 @@ func (s *OrderService) MarkAsPaid(orderID string) error {
 		return err
 	}
 
-	// generate resi
 	noResi := fmt.Sprintf("LOG-%s-%d", orderID, time.Now().Unix())
 	err = s.OrderRepo.CreateResi(id, noResi)
 	if err != nil {
@@ -122,6 +118,10 @@ func (s *OrderService) MarkAsPaid(orderID string) error {
 	}
 
 	return nil
+}
+
+func (s *OrderService) GetResiByOrderID(orderID int) (string, error) {
+	return s.OrderRepo.FindResiByOrderID(orderID)
 }
 
 func calculateShippingCost(weightKg float64, distanceKm float64, serviceType string) float64 {
