@@ -24,28 +24,17 @@ func NewOrderService(
 }
 
 func (s *OrderService) CreateOrder(req dto.CreateOrderRequest) (*entity.Order, error) {
-	originCity, err := s.CityRepo.GetByID(req.OriginCityID)
-	if err != nil {
-		return nil, fmt.Errorf("origin city not found: %v", err)
-	}
-
-	destCity, err := s.CityRepo.GetByID(req.DestinationCityID)
-	if err != nil {
-		return nil, fmt.Errorf("destination city not found: %v", err)
-	}
-
-	// geocode nama kota → dapat koordinat
-	originLat, originLon, err := GetCoordinate(originCity.Name)
+	// geocode nama kota langsung tanpa lookup DB
+	originLat, originLon, err := GetCoordinate(req.OriginCity)
 	if err != nil {
 		return nil, fmt.Errorf("geocode origin failed: %v", err)
 	}
 
-	destLat, destLon, err := GetCoordinate(destCity.Name)
+	destLat, destLon, err := GetCoordinate(req.DestinationCity)
 	if err != nil {
 		return nil, fmt.Errorf("geocode destination failed: %v", err)
 	}
 
-	// hitung jarak via OSRM
 	distanceKm, err := GetDistance(originLon, originLat, destLon, destLat)
 	if err != nil {
 		return nil, fmt.Errorf("get distance failed: %v", err)
@@ -55,24 +44,23 @@ func (s *OrderService) CreateOrder(req dto.CreateOrderRequest) (*entity.Order, e
 	totalPrice := shippingCost
 
 	order := &entity.Order{
-		UserID:            req.UserID,
-		SenderName:        req.SenderName,
-		SenderPhone:       req.SenderPhone,
-		SenderAddress:     req.SenderAddress,
-		ReceiverName:      req.ReceiverName,
-		ReceiverPhone:     req.ReceiverPhone,
-		ReceiverAddress:   req.ReceiverAddress,
-		ItemName:          req.ItemName,
-		ItemType:          req.ItemType,
-		WeightKg:          req.WeightKg,
-		DistanceKm:        math.Round(distanceKm*100) / 100,
-		OriginCityID:      req.OriginCityID,
-		DestinationCityID: req.DestinationCityID,
-		ServiceType:       req.ServiceType,
-		BasePrice:         0,
-		ShippingCost:      shippingCost,
-		TotalPrice:        totalPrice,
-		Status:            "WAITING_PAYMENT",
+		UserID:          req.UserID,
+		SenderName:      req.SenderName,
+		SenderPhone:     req.SenderPhone,
+		SenderAddress:   req.SenderAddress,
+		ReceiverName:    req.ReceiverName,
+		ReceiverPhone:   req.ReceiverPhone,
+		ReceiverAddress: req.ReceiverAddress,
+		ItemName:        req.ItemName,
+		ItemType:        req.ItemType,
+		WeightKg:        req.WeightKg,
+		DistanceKm:      math.Round(distanceKm*100) / 100,
+		OriginCity:      req.OriginCity,
+		DestinationCity: req.DestinationCity,
+		ServiceType:     req.ServiceType,
+		ShippingCost:    shippingCost,
+		TotalPrice:      totalPrice,
+		Status:          "WAITING_PAYMENT",
 	}
 
 	err = s.OrderRepo.Create(order)
