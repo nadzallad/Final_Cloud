@@ -10,6 +10,7 @@ import (
 	"order-service/internal/entity"
 	"order-service/internal/repository"
 	"strconv"
+	"time"
 )
 
 type OrderService struct {
@@ -28,7 +29,6 @@ func NewOrderService(
 }
 
 func (s *OrderService) CreateOrder(req dto.CreateOrderRequest) (*entity.Order, error) {
-	// geocode nama kota langsung tanpa lookup DB
 	originLat, originLon, err := GetCoordinate(req.OriginCity)
 	if err != nil {
 		return nil, fmt.Errorf("geocode origin failed: %v", err)
@@ -88,7 +88,6 @@ func (s *OrderService) CreateOrder(req dto.CreateOrderRequest) (*entity.Order, e
 	)
 
 	if err != nil {
-		// log error tapi jangan gagalkan order
 		fmt.Println("Warning: gagal kirim ke payment service:", err)
 	} else {
 		defer resp.Body.Close()
@@ -109,7 +108,20 @@ func (s *OrderService) MarkAsPaid(orderID string) error {
 	if err != nil {
 		return err
 	}
-	return s.OrderRepo.UpdateStatus(id, "PAID")
+
+	err = s.OrderRepo.UpdateStatus(id, "PAID")
+	if err != nil {
+		return err
+	}
+
+	// generate resi
+	noResi := fmt.Sprintf("LOG-%s-%d", orderID, time.Now().Unix())
+	err = s.OrderRepo.CreateResi(id, noResi)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func calculateShippingCost(weightKg float64, distanceKm float64, serviceType string) float64 {
@@ -123,7 +135,7 @@ func calculateShippingCost(weightKg float64, distanceKm float64, serviceType str
 		tarifPerKm = 150
 	case "DOC":
 		tarifPerKm = 80
-	default: // EZ
+	default:
 		tarifPerKm = 100
 	}
 

@@ -35,3 +35,10 @@ func (r *OrderRepository) UpdateStatus(orderID int, status string) error {
 		Where("order_id = ?", orderID).
 		Update("status", status).Error
 }
+
+func (r *OrderRepository) CreateResi(orderID int, noResi string) error {
+	return r.DB.Exec(
+		`INSERT INTO resi (order_id, no_resi) VALUES (?, ?)`,
+		orderID, noResi,
+	).Error
+}
