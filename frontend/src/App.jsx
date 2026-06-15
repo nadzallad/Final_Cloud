@@ -6,6 +6,7 @@ import CreateOrder from "./pages/CreateOrder";
 import Tracking from "./pages/Tracking";
 import Profile from "./pages/Profile";
 import Payment from "./pages/Payment";
+import Pickups from "./pages/Pickups";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
       <Route path="/tracking" element={<Tracking />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/payment" element={<Payment />}/>
+      <Route path="/pickups" element={<Pickups />}/>
     </Routes>
   );
 }
