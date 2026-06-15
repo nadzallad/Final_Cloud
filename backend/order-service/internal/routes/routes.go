@@ -12,5 +12,6 @@ func SetupRoutes(router *gin.Engine, orderHandler *handler.OrderHandler) {
 		api.POST("/orders", orderHandler.CreateOrder)
 		api.GET("/orders", orderHandler.GetOrders)
 		api.POST("/orders/:id/confirm-payment", orderHandler.ConfirmPayment)
+		api.GET("/orders/:id/resi", orderHandler.GetResi)
 	}
 }

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getOrders } from "../services/orderService";
 import Navbar from "../components/Navbar";
+import api from "../services/api";
 
 function Orders() {
   const [orders, setOrders] = useState([]);
@@ -12,9 +13,33 @@ function Orders() {
   const loadOrders = async () => {
     try {
       const res = await getOrders();
-      setOrders(res.data);
+      const ordersData = res.data;
+
+      // fetch resi untuk setiap order
+      const ordersWithResi = await Promise.all(
+        ordersData.map(async (order) => {
+          try {
+            const resiRes = await api.get(`/api/orders/${order.order_id}/resi`);
+            return { ...order, no_resi: resiRes.data.no_resi };
+          } catch {
+            return { ...order, no_resi: "-" };
+          }
+        })
+      );
+
+      setOrders(ordersWithResi);
     } catch (err) {
       console.log(err);
+    }
+  };
+
+  const handleConfirmPayment = async (orderID) => {
+    try {
+      await api.post(`/api/orders/${orderID}/confirm-payment`);
+      alert("Payment dikonfirmasi! Resi sedang dibuat...");
+      loadOrders();
+    } catch (err) {
+      alert("Gagal konfirmasi payment");
     }
   };
 
@@ -38,7 +63,9 @@ function Orders() {
                 <th>Tujuan</th>
                 <th>Jarak</th>
                 <th>Ongkir</th>
+                <th>No Resi</th>
                 <th>Status</th>
+                <th>Aksi</th>
               </tr>
             </thead>
             <tbody>
@@ -53,6 +80,7 @@ function Orders() {
                   <td>{o.destination_city}</td>
                   <td>{o.distance_km} km</td>
                   <td>Rp {o.shipping_cost?.toLocaleString("id-ID")}</td>
+                  <td>{o.no_resi}</td>
                   <td>
                     <span style={{
                       padding: "4px 8px",
@@ -63,6 +91,23 @@ function Orders() {
                     }}>
                       {o.status}
                     </span>
+                  </td>
+                  <td>
+                    {o.status === "WAITING_PAYMENT" && (
+                      <button
+                        onClick={() => handleConfirmPayment(o.order_id)}
+                        style={{
+                          padding: "4px 8px",
+                          backgroundColor: "#c0392b",
+                          color: "white",
+                          border: "none",
+                          borderRadius: "4px",
+                          cursor: "pointer"
+                        }}
+                      >
+                        Bayar
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}

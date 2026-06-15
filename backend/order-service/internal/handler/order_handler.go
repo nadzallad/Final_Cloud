@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"order-service/internal/dto"
 	"order-service/internal/service"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -52,4 +53,26 @@ func (h *OrderHandler) ConfirmPayment(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "order marked as paid", "order_id": idStr})
+}
+
+func (h *OrderHandler) GetResi(c *gin.Context) {
+	idStr := c.Param("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid order id"})
+		return
+	}
+
+	noResi, err := h.OrderService.GetResiByOrderID(id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	if noResi == "" {
+		c.JSON(http.StatusNotFound, gin.H{"error": "resi belum tersedia"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"order_id": id, "no_resi": noResi})
 }
