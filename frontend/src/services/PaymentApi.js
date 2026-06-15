@@ -1,7 +1,5 @@
-import api from "./api";
+import axios from "axios";
 
-export const getPayments = () =>
-  api.get("/payments");
-
-export const createPayment = (data) =>
-  api.post("/payments", data);
+export default axios.create({
+  baseURL: "http://localhost:8082",
+});

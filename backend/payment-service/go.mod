@@ -6,6 +6,7 @@ require (
 	github.com/gin-contrib/cors v1.7.7
 	github.com/gin-gonic/gin v1.12.0
 	github.com/google/uuid v1.6.0
+	github.com/midtrans/midtrans-go v1.3.8
 	github.com/rabbitmq/amqp091-go v1.11.0
 	gorm.io/driver/postgres v1.6.0
 	gorm.io/gorm v1.31.1

@@ -83,29 +83,38 @@ function CreateOrder() {
 
   const handleSubmit = async (e) => {
 
-    e.preventDefault();
+  e.preventDefault();
 
-    try {
+  try {
 
-      console.log(form);
-
+    const response =
       await createOrder(form);
 
-      alert("Order berhasil dibuat");
+    localStorage.setItem(
+      "orderDraft",
+      JSON.stringify({
+        ...form,
+        order_id:
+          response.data.order_id,
+        shipping_cost:
+          response.data.shipping_cost,
+        total_price:
+          response.data.total,
+      })
+    );
 
-      navigate("/orders");
+    navigate("/payment");
 
-    } catch (error) {
+  } catch (error) {
 
-        console.error(error);
+    console.error(error);
 
-        alert(
-          error.response?.data?.error ||
-          error.message
-        );
-      }
-
-    };
+    alert(
+      error.response?.data?.error ||
+      error.message
+    );
+  }
+};
 
   return (
 

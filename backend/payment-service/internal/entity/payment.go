@@ -9,7 +9,7 @@ import (
 type Payment struct {
 	PaymentID uuid.UUID `gorm:"column:payment_id;primaryKey"`
 
-	OrderID string `gorm:"column:order_id"`
+	OrderID int  `gorm:"column:order_id"`
 
 	PaymentMethod string `gorm:"column:payment_method"`
 
@@ -20,6 +20,8 @@ type Payment struct {
 	AdminFee float64 `gorm:"column:admin_fee"`
 
 	Status string `gorm:"column:status"`
+
+	PaymentURL string `gorm:"-"`
 
 	CreatedAt time.Time `gorm:"column:created_at"`
 

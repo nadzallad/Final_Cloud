@@ -1,5 +1,5 @@
-import api from "./api";
+import api from "./paymentApi";
 
-export const payOrder = (data) => {
-    return api.post("/payments", data);
+export const createPayment = (data) => {
+  return api.post("/payments", data);
 };

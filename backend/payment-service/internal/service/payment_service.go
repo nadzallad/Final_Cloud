@@ -1,14 +1,14 @@
 package service
 
 import (
-	"time"
-
+	"bytes"
+	"fmt"
+	"net/http"
 	"payment-service/internal/dto"
 	"payment-service/internal/entity"
 	"payment-service/internal/rabbitmq"
 	"payment-service/internal/repository"
-
-	"github.com/google/uuid"
+	"strconv"
 )
 
 type PaymentService struct {
@@ -31,46 +31,60 @@ func (s *PaymentService) CreatePayment(
 	req dto.CreatePaymentRequest,
 ) (*entity.Payment, error) {
 
-	payment := entity.Payment{
-		PaymentID: uuid.New(),
-
-		OrderID: req.OrderID,
-
-		Total: req.Total,
-
-		Discount: 0,
-
-		AdminFee: 0,
-
-		Status: "UNPAID",
-
-		PaymentMethod: req.PaymentMethod,
-	}
-
-	err := s.repo.Create(&payment)
+	snapResp, err :=
+		CreateSnapTransaction(
+			req.OrderID,
+			req.Total,
+		)
 
 	if err != nil {
 		return nil, err
 	}
+
+	payment := entity.Payment{
+		OrderID: req.OrderID,
+
+		PaymentMethod: req.PaymentMethod,
+
+		Total: req.Total,
+
+		Status: "PENDING",
+	}
+
+	err = s.repo.Create(&payment)
+
+	if err != nil {
+		return nil, err
+	}
+
+	payment.PaymentURL =
+		snapResp.RedirectURL
 
 	return &payment, nil
 }
 
 func (s *PaymentService) MarkAsPaid(
-	paymentID string,
+	orderID string,
 ) (*entity.Payment, error) {
 
-	payment, err :=
-		s.repo.FindByID(paymentID)
+	id, err := strconv.Atoi(orderID)
 
 	if err != nil {
 		return nil, err
 	}
 
-	now := time.Now()
+	payment, err :=
+		s.repo.FindByOrderID(id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if err != nil {
+		return nil, err
+	}
 
 	payment.Status = "PAID"
-	payment.PaidAt = &now
 
 	err = s.repo.Update(payment)
 
@@ -78,19 +92,19 @@ func (s *PaymentService) MarkAsPaid(
 		return nil, err
 	}
 
-	if s.publisher != nil {
+	url := fmt.Sprintf(
+		"http://localhost:8081/api/orders/%s/confirm-payment",
+		orderID,
+	)
 
-		err = s.publisher.Publish(
-			"payment.success",
-			map[string]interface{}{
-				"order_id": payment.OrderID,
-				"status":   "PAID",
-			},
-		)
+	_, err = http.Post(
+		url,
+		"application/json",
+		bytes.NewBuffer([]byte(`{}`)),
+	)
 
-		if err != nil {
-			return nil, err
-		}
+	if err != nil {
+		return nil, err
 	}
 
 	return payment, nil

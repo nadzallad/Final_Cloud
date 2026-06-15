@@ -49,3 +49,23 @@ func (r *PaymentRepository) Update(
 
 	return r.db.Save(payment).Error
 }
+
+func (r *PaymentRepository) FindByOrderID(
+	orderID int,
+) (*entity.Payment, error) {
+
+	var payment entity.Payment
+
+	err := r.db.
+		Where(
+			"order_id = ?",
+			orderID,
+		).
+		First(&payment).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &payment, nil
+}

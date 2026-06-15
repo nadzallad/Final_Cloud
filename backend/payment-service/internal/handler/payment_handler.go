@@ -63,28 +63,82 @@ func (h *PaymentHandler) CreatePayment(
 }
 
 func (h *PaymentHandler) Pay(
-    c *gin.Context,
+	c *gin.Context,
 ) {
 
-    id := c.Param("id")
+	id := c.Param("id")
 
-    payment, err :=
-        h.service.MarkAsPaid(id)
+	payment, err :=
+		h.service.MarkAsPaid(id)
 
-    if err != nil {
+	if err != nil {
 
-        c.JSON(
-            http.StatusBadRequest,
-            gin.H{
-                "error": err.Error(),
-            },
-        )
+		c.JSON(
+			http.StatusBadRequest,
+			gin.H{
+				"error": err.Error(),
+			},
+		)
 
-        return
-    }
+		return
+	}
 
-    c.JSON(
-        http.StatusOK,
-        payment,
-    )
+	c.JSON(
+		http.StatusOK,
+		payment,
+	)
+}
+
+func (h *PaymentHandler) Notification(
+	c *gin.Context,
+) {
+
+	var notification map[string]interface{}
+
+	if err := c.ShouldBindJSON(
+		&notification,
+	); err != nil {
+
+		c.JSON(
+			http.StatusBadRequest,
+			gin.H{
+				"error": err.Error(),
+			},
+		)
+
+		return
+	}
+
+	orderID :=
+		notification["order_id"].(string)
+
+	transactionStatus :=
+		notification["transaction_status"].(string)
+
+	if transactionStatus == "settlement" {
+
+		_, err :=
+			h.service.MarkAsPaid(
+				orderID,
+			)
+
+		if err != nil {
+
+			c.JSON(
+				http.StatusInternalServerError,
+				gin.H{
+					"error": err.Error(),
+				},
+			)
+
+			return
+		}
+	}
+
+	c.JSON(
+		http.StatusOK,
+		gin.H{
+			"message": "notification received",
+		},
+	)
 }

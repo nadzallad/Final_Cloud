@@ -27,5 +27,10 @@ func SetupRoutes(
 		paymentHandler.Pay,
 	)
 	
+	router.POST(
+		"/payments/notification",
+		paymentHandler.Notification,
+	)
+	
 
 }
