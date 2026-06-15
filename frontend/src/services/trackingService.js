@@ -1,11 +1,15 @@
-import api from "./api";
+import axios from "axios";
+
+const trackingApi = axios.create({
+  baseURL: "http://localhost:8087",
+});
 
 const getTrackings = () => {
-  return api.get("/tracking");
+  return trackingApi.get("/tracking");
 };
 
 const createTracking = (data) => {
-  return api.post("/tracking", data);
+  return trackingApi.post("/tracking", data);
 };
 
 export default {
