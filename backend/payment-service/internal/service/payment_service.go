@@ -1,6 +1,7 @@
 package service
 
 import (
+	"time"
 	"bytes"
 	"fmt"
 	"net/http"
@@ -31,34 +32,59 @@ func (s *PaymentService) CreatePayment(
 	req dto.CreatePaymentRequest,
 ) (*entity.Payment, error) {
 
-	snapResp, err :=
-		CreateSnapTransaction(
-			req.OrderID,
-			req.Total,
-		)
-
-	if err != nil {
-		return nil, err
-	}
+	fmt.Println("===== CREATE PAYMENT =====")
+	fmt.Println("OrderID:", req.OrderID)
+	fmt.Println("Method :", req.PaymentMethod)
+	fmt.Println("Total  :", req.Total)
 
 	payment := entity.Payment{
 		OrderID: req.OrderID,
-
 		PaymentMethod: req.PaymentMethod,
-
 		Total: req.Total,
-
 		Status: "PENDING",
 	}
 
-	err = s.repo.Create(&payment)
+	fmt.Println("SAVE DATABASE...")
 
-	if err != nil {
+	if err := s.repo.Create(&payment); err != nil {
+		fmt.Println("DB ERROR:", err)
 		return nil, err
 	}
 
+	fmt.Println("PAYMENT SAVED")
+	fmt.Println("PaymentID:", payment.PaymentID)
+
+	orderID := fmt.Sprintf(
+		"%d-%d",
+		req.OrderID,
+		time.Now().Unix(),
+	)
+
+	fmt.Println("MIDTRANS ORDER ID:", orderID)
+
+	fmt.Println("CALL MIDTRANS...")
+
+	snapResp, err := CreateSnapTransaction(
+		orderID,
+		req.Total,
+	)
+
+	if err != nil {
+
+		fmt.Println("MIDTRANS ERROR:")
+		fmt.Println(err)
+
+		return nil, err
+	}
+
+	fmt.Println("MIDTRANS SUCCESS")
+	fmt.Println("TOKEN:", snapResp.Token)
+	fmt.Println("URL:", snapResp.RedirectURL)
+
 	payment.PaymentURL =
 		snapResp.RedirectURL
+
+	fmt.Println("RETURN RESPONSE")
 
 	return &payment, nil
 }
@@ -75,10 +101,6 @@ func (s *PaymentService) MarkAsPaid(
 
 	payment, err :=
 		s.repo.FindByOrderID(id)
-
-	if err != nil {
-		return nil, err
-	}
 
 	if err != nil {
 		return nil, err

@@ -313,31 +313,7 @@ function CreateOrder() {
             JND Next Day
           </option>
         </select>
-        <h3>Payment Information</h3>
 
-        <label>Payment Method</label>
-        <select
-          name="payment_method"
-          value={form.payment_method}
-          onChange={handleChange}
-          required
-        >
-          <option value="TRANSFER">
-            VA BCA
-          </option>
-
-          <option value="QRIS">
-            QRIS
-          </option>
-
-          <option value="EWALLET">
-            VA BRI
-          </option>
-
-          <option value="COD">
-            Cash On Delivery
-          </option>
-        </select>
         <button
           type="submit"
           className="btn-primary"

@@ -1,30 +1,48 @@
 package service
 
 import (
-	"os"
+	"fmt"
 
 	"github.com/midtrans/midtrans-go"
 	"github.com/midtrans/midtrans-go/snap"
 )
 
 func CreateSnapTransaction(
-	orderID int,
+	orderID string,
 	total float64,
 ) (*snap.Response, error) {
+
+	fmt.Println("INIT MIDTRANS")
 
 	var s snap.Client
 
 	s.New(
-		os.Getenv("MIDTRANS_SERVER_KEY"),
+		"Mid-server-N7hVKKKoVaPLkU1C4sjm_tKq",
 		midtrans.Sandbox,
 	)
 
 	req := &snap.Request{
 		TransactionDetails: midtrans.TransactionDetails{
-			OrderID:  string(rune(orderID)),
+			OrderID:  orderID,
 			GrossAmt: int64(total),
 		},
 	}
 
-	return s.CreateTransaction(req)
+	fmt.Println("REQUEST MIDTRANS")
+	fmt.Println("ORDER:", orderID)
+	fmt.Println("TOTAL:", total)
+
+	resp, err := s.CreateTransaction(req)
+
+	if err != nil {
+
+		fmt.Println("MIDTRANS FAILED")
+		fmt.Println(err)
+
+		return nil, err
+	}
+
+	fmt.Println("MIDTRANS OK")
+
+	return resp, nil
 }

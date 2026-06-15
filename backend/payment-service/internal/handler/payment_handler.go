@@ -2,9 +2,11 @@ package handler
 
 import (
 	"net/http"
-
+	"strings"
+	
 	"payment-service/internal/dto"
 	"payment-service/internal/service"
+	
 
 	"github.com/gin-gonic/gin"
 )
@@ -109,8 +111,15 @@ func (h *PaymentHandler) Notification(
 		return
 	}
 
-	orderID :=
+	midtransOrderID :=
 		notification["order_id"].(string)
+
+	parts := strings.Split(
+		midtransOrderID,
+		"-",
+	)
+
+	orderID := parts[0]
 
 	transactionStatus :=
 		notification["transaction_status"].(string)

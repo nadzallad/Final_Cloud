@@ -3,9 +3,20 @@ package entity
 import (
 	"time"
 
+	"gorm.io/gorm"
 	"github.com/google/uuid"
 )
 
+func (p *Payment) BeforeCreate(
+    tx *gorm.DB,
+) error {
+
+    if p.PaymentID == uuid.Nil {
+        p.PaymentID = uuid.New()
+    }
+
+    return nil
+}
 type Payment struct {
 	PaymentID uuid.UUID `gorm:"column:payment_id;primaryKey"`
 
@@ -21,7 +32,7 @@ type Payment struct {
 
 	Status string `gorm:"column:status"`
 
-	PaymentURL string `gorm:"-"`
+	PaymentURL string `json:"payment_url" gorm:"-"`
 
 	CreatedAt time.Time `gorm:"column:created_at"`
 
