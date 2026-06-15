@@ -1,0 +1,43 @@
+services:
+  pickup_postgres:
+    image: postgres:16
+    container_name: pickup_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: pickup_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - pickup_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: pickup_rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  pickup-service:
+    build: .
+    container_name: pickup_service
+    ports:
+      - "8083:8083"
+    environment:
+      DB_HOST: pickup_postgres
+      DB_PASS: admin123
+      DB_NAME: pickup_db
+      ORDER_SERVICE_URL: http://order-service:8081
+    depends_on:
+      pickup_postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_started
+
+volumes:
+  pickup_pg_data:
