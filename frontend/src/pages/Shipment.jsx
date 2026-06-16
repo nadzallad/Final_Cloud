@@ -1,103 +1,99 @@
 import { useEffect, useState } from "react";
-import {
-  getAllShipments,
-  getShipmentByResi,
-} from "../services/shipmentService";
+import { getAllShipments } from "../services/shipmentService";
+import Navbar from "../components/Navbar";
 
-export default function Shipment() {
+function Shipment() {
   const [shipments, setShipments] = useState([]);
-  const [resi, setResi] = useState("");
-  const [trackingResult, setTrackingResult] = useState(null);
 
   useEffect(() => {
-    fetchShipments();
+    loadShipments();
   }, []);
 
-  const fetchShipments = async () => {
+  const loadShipments = async () => {
     try {
-      const data = await getAllShipments();
-      setShipments(data);
-    } catch (error) {
-      console.error("Gagal mengambil data shipment:", error);
-    }
-  };
-
-  const handleTrack = async () => {
-    if (!resi) {
-      alert("Masukkan nomor resi");
-      return;
-    }
-
-    try {
-      const data = await getShipmentByResi(resi);
-      setTrackingResult(data);
-    } catch (error) {
-      alert("Shipment tidak ditemukan");
-      setTrackingResult(null);
+      const res = await getAllShipments();
+      setShipments(res.data);
+    } catch (err) {
+      console.log(err);
     }
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>Shipment Service</h1>
+    <>
+      <Navbar />
 
-      {/* Tracking */}
-      <div style={{ marginBottom: "30px" }}>
-        <h2>Track Shipment</h2>
+      <div style={{ padding: "20px" }}>
+        <h1>Shipments</h1>
 
-        <input
-          type="text"
-          placeholder="Masukkan No Resi"
-          value={resi}
-          onChange={(e) => setResi(e.target.value)}
-          style={{ marginRight: "10px" }}
-        />
+        {shipments.length === 0 ? (
+          <p>Belum ada shipment.</p>
+        ) : (
+          <table
+            border="1"
+            cellPadding="10"
+            style={{
+              width: "100%",
+              borderCollapse: "collapse",
+            }}
+          >
+            <thead
+              style={{
+                backgroundColor: "#c0392b",
+                color: "white",
+              }}
+            >
+              <tr>
+                <th>ID</th>
+                <th>Tracking ID</th>
+                <th>No Resi</th>
+                <th>Asal</th>
+                <th>Tujuan</th>
+                <th>Lokasi Saat Ini</th>
+                <th>Status</th>
+                <th>ETA</th>
+              </tr>
+            </thead>
 
-        <button onClick={handleTrack}>
-          Track
-        </button>
+            <tbody>
+              {shipments.map((s) => (
+                <tr key={s.shipment_id}>
+                  <td>{s.shipment_id}</td>
+                  <td>{s.tracking_id}</td>
+                  <td>{s.no_resi}</td>
+                  <td>{s.origin_city}</td>
+                  <td>{s.destination_city}</td>
+                  <td>{s.current_location}</td>
 
-        {trackingResult && (
-          <div style={{ marginTop: "20px" }}>
-            <p><strong>No Resi:</strong> {trackingResult.no_resi}</p>
-            <p><strong>Tracking ID:</strong> {trackingResult.tracking_id}</p>
-            <p><strong>Origin:</strong> {trackingResult.origin_city}</p>
-            <p><strong>Destination:</strong> {trackingResult.destination_city}</p>
-            <p><strong>Current Location:</strong> {trackingResult.current_location}</p>
-            <p><strong>Status:</strong> {trackingResult.status}</p>
-            <p><strong>ETA:</strong> {trackingResult.eta}</p>
-          </div>
+                  <td>
+                    <span
+                      style={{
+                        padding: "4px 8px",
+                        borderRadius: "4px",
+                        backgroundColor:
+                          s.status === "DELIVERED"
+                            ? "#27ae60"
+                            : "#e67e22",
+                        color: "white",
+                        fontSize: "12px",
+                      }}
+                    >
+                      {s.status}
+                    </span>
+                  </td>
+
+                  <td>
+                    {s.eta
+                      ? new Date(s.eta).toLocaleString("id-ID")
+                      : "-"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         )}
       </div>
-
-      {/* List Shipment */}
-      <h2>Daftar Shipment</h2>
-
-      <table border="1" cellPadding="10">
-        <thead>
-          <tr>
-            <th>No Resi</th>
-            <th>Origin</th>
-            <th>Destination</th>
-            <th>Current Location</th>
-            <th>Status</th>
-            <th>ETA</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {shipments.map((shipment) => (
-            <tr key={shipment.shipment_id}>
-              <td>{shipment.no_resi}</td>
-              <td>{shipment.origin_city}</td>
-              <td>{shipment.destination_city}</td>
-              <td>{shipment.current_location}</td>
-              <td>{shipment.status}</td>
-              <td>{shipment.eta}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    </>
   );
 }
+
+export default Shipment;
