@@ -1,0 +1,44 @@
+services:
+  warehouse_postgres:
+    image: postgres:16
+    container_name: warehouse_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: warehouse_db
+    ports:
+      - "5434:5432"
+    volumes:
+      - warehouse_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: warehouse_rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  warehouse-service:
+    build: .
+    container_name: warehouse_service
+    ports:
+      - "8084:8084"
+    environment:
+      DB_HOST: warehouse_postgres
+      DB_PASS: admin123
+      DB_NAME: warehouse_db
+      PICKUP_SERVICE_URL: http://pickup-service:8083
+      ORDER_SERVICE_URL: http://order-service:8081
+    depends_on:
+      warehouse_postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_started
+
+volumes:
+  warehouse_pg_data:
