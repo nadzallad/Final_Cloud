@@ -8,6 +8,7 @@ import Profile from "./pages/Profile";
 import Payment from "./pages/Payment";
 import Pickups from "./pages/Pickups";
 import Warehouse from "./pages/Warehouse";
+import Shipment from "./pages/Shipment";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
       <Route path="/payment" element={<Payment />}/>
       <Route path="/pickups" element={<Pickups />}/>
       <Route path="/warehouse" element={<Warehouse />}/>
+      <Route path="/shipment" element={<Shipment />} />
     </Routes>
   );
 }
