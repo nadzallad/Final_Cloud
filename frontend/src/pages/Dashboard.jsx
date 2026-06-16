@@ -87,6 +87,14 @@ return ( <div className="dashboard">
       <span>Track Parcel</span>
     </div>
 
+    <div
+      className="action-card"
+      onClick={() => navigate("/tracking-user")}
+    >
+      <div className="icon">📦</div>
+      <span>Track User</span>
+    </div>
+
   </div>
 
   {/* SHIPPING SERVICES */}
