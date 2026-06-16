@@ -5,6 +5,7 @@ import (
 
 	"github.com/midtrans/midtrans-go"
 	"github.com/midtrans/midtrans-go/snap"
+	"github.com/midtrans/midtrans-go/coreapi"
 )
 
 func CreateSnapTransaction(
@@ -45,4 +46,21 @@ func CreateSnapTransaction(
 	fmt.Println("MIDTRANS OK")
 
 	return resp, nil
+}
+
+func CheckTransaction(orderID string) (string, error) {
+	var c coreapi.Client
+
+	c.New(
+		"Mid-server-N7hVKKKoVaPLkU1C4sjm_tKq",
+		midtrans.Sandbox,
+	)
+
+	resp, err := c.CheckTransaction(orderID)
+
+	if err != nil {
+		return "", err
+	}
+
+	return resp.TransactionStatus, nil
 }

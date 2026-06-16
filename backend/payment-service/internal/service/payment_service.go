@@ -1,7 +1,6 @@
 package service
 
 import (
-	"time"
 	"bytes"
 	"fmt"
 	"net/http"
@@ -36,6 +35,8 @@ func (s *PaymentService) CreatePayment(
 	fmt.Println("OrderID:", req.OrderID)
 	fmt.Println("Method :", req.PaymentMethod)
 	fmt.Println("Total  :", req.Total)
+	fmt.Println("REAL ORDER ID:", req.OrderID)
+
 
 	payment := entity.Payment{
 		OrderID: req.OrderID,
@@ -54,10 +55,8 @@ func (s *PaymentService) CreatePayment(
 	fmt.Println("PAYMENT SAVED")
 	fmt.Println("PaymentID:", payment.PaymentID)
 
-	orderID := fmt.Sprintf(
-		"%d-%d",
+	orderID := strconv.Itoa(
 		req.OrderID,
-		time.Now().Unix(),
 	)
 
 	fmt.Println("MIDTRANS ORDER ID:", orderID)

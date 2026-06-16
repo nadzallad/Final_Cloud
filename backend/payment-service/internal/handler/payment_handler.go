@@ -1,13 +1,10 @@
 package handler
 
 import (
+	"log"
 	"net/http"
-	"strings"
-	
 	"payment-service/internal/dto"
 	"payment-service/internal/service"
-	
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -97,9 +94,11 @@ func (h *PaymentHandler) Notification(
 
 	var notification map[string]interface{}
 
-	if err := c.ShouldBindJSON(
-		&notification,
-	); err != nil {
+	log.Println("=== MIDTRANS CALLBACK MASUK ===")
+
+	if err := c.ShouldBindJSON(&notification); err != nil {
+
+		log.Printf("ShouldBindJSON error: %v", err)
 
 		c.JSON(
 			http.StatusBadRequest,
@@ -111,18 +110,43 @@ func (h *PaymentHandler) Notification(
 		return
 	}
 
-	midtransOrderID :=
-		notification["order_id"].(string)
-
-	parts := strings.Split(
-		midtransOrderID,
-		"-",
+	log.Printf(
+		"Payload: %+v\n",
+		notification,
 	)
 
-	orderID := parts[0]
+	orderID, ok :=
+		notification["order_id"].(string)
 
-	transactionStatus :=
+	if !ok {
+
+		c.JSON(
+			http.StatusBadRequest,
+			gin.H{
+				"error": "order_id tidak ditemukan",
+			},
+		)
+
+		return
+	}
+
+	transactionStatus, ok :=
 		notification["transaction_status"].(string)
+
+	if !ok {
+
+		c.JSON(
+			http.StatusBadRequest,
+			gin.H{
+				"error": "transaction_status tidak ditemukan",
+			},
+		)
+
+		return
+	}
+
+	log.Printf("OrderID: %s", orderID)
+	log.Printf("Status : %s", transactionStatus)
 
 	if transactionStatus == "settlement" {
 
@@ -148,6 +172,34 @@ func (h *PaymentHandler) Notification(
 		http.StatusOK,
 		gin.H{
 			"message": "notification received",
+		},
+	)
+}
+
+func (h *PaymentHandler) CheckStatus(
+	c *gin.Context,
+) {
+
+	orderID := c.Param("orderId")
+
+	status, err := service.CheckTransaction(orderID)
+
+	if err != nil {
+		c.JSON(
+			http.StatusInternalServerError,
+			gin.H{"error": err.Error()},
+		)
+		return
+	}
+	
+	if status == "settlement" {
+		h.service.MarkAsPaid(orderID)
+	}
+
+	c.JSON(
+		http.StatusOK,
+		gin.H{
+			"status": status,
 		},
 	)
 }
