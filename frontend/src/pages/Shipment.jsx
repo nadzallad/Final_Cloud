@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
-import { getAllShipments } from "../services/shipmentService";
 import Navbar from "../components/Navbar";
+import BottomNav from "../components/BottomNav";
+import shipmentApi from "../services/shipmentService";
 
 function Shipment() {
   const [shipments, setShipments] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     loadShipments();
@@ -11,10 +13,12 @@ function Shipment() {
 
   const loadShipments = async () => {
     try {
-      const res = await getAllShipments();
-      setShipments(res.data);
+      const res = await shipmentApi.get("/shipments");
+      setShipments(res.data || []);
     } catch (err) {
       console.log(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -23,18 +27,17 @@ function Shipment() {
       <Navbar />
 
       <div style={{ padding: "20px" }}>
-        <h1>Shipments</h1>
+        <h1>Shipment</h1>
 
-        {shipments.length === 0 ? (
+        {loading ? (
+          <p>Memuat data...</p>
+        ) : shipments.length === 0 ? (
           <p>Belum ada shipment.</p>
         ) : (
           <table
             border="1"
             cellPadding="10"
-            style={{
-              width: "100%",
-              borderCollapse: "collapse",
-            }}
+            style={{ width: "100%", borderCollapse: "collapse" }}
           >
             <thead
               style={{
@@ -51,6 +54,7 @@ function Shipment() {
                 <th>Lokasi Saat Ini</th>
                 <th>Status</th>
                 <th>ETA</th>
+                <th>Dibuat</th>
               </tr>
             </thead>
 
@@ -86,12 +90,20 @@ function Shipment() {
                       ? new Date(s.eta).toLocaleString("id-ID")
                       : "-"}
                   </td>
+
+                  <td>
+                    {s.created_at
+                      ? new Date(s.created_at).toLocaleString("id-ID")
+                      : "-"}
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         )}
       </div>
+
+      <BottomNav />
     </>
   );
 }
