@@ -1,7 +1,6 @@
 import { useNavigate, useLocation } from "react-router-dom";
 
 function BottomNav() {
-
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -11,8 +10,8 @@ function BottomNav() {
       <div
         className={
           location.pathname === "/"
-          ? "nav-item active"
-          : "nav-item"
+            ? "nav-item active"
+            : "nav-item"
         }
         onClick={() => navigate("/")}
       >
@@ -23,8 +22,8 @@ function BottomNav() {
       <div
         className={
           location.pathname === "/orders"
-          ? "nav-item active"
-          : "nav-item"
+            ? "nav-item active"
+            : "nav-item"
         }
         onClick={() => navigate("/orders")}
       >
@@ -35,8 +34,8 @@ function BottomNav() {
       <div
         className={
           location.pathname === "/pickups"
-          ? "nav-item active"
-          : "nav-item"
+            ? "nav-item active"
+            : "nav-item"
         }
         onClick={() => navigate("/pickups")}
       >
@@ -47,8 +46,8 @@ function BottomNav() {
       <div
         className={
           location.pathname === "/warehouse"
-          ? "nav-item active"
-          : "nav-item"
+            ? "nav-item active"
+            : "nav-item"
         }
         onClick={() => navigate("/warehouse")}
       >
@@ -58,9 +57,21 @@ function BottomNav() {
 
       <div
         className={
+          location.pathname === "/shipment"
+            ? "nav-item active"
+            : "nav-item"
+        }
+        onClick={() => navigate("/shipment")}
+      >
+        🚛
+        <span>Shipment</span>
+      </div>
+
+      <div
+        className={
           location.pathname === "/tracking"
-          ? "nav-item active"
-          : "nav-item"
+            ? "nav-item active"
+            : "nav-item"
         }
         onClick={() => navigate("/tracking")}
       >
@@ -71,8 +82,8 @@ function BottomNav() {
       <div
         className={
           location.pathname === "/profile"
-          ? "nav-item active"
-          : "nav-item"
+            ? "nav-item active"
+            : "nav-item"
         }
         onClick={() => navigate("/profile")}
       >
