@@ -14,7 +14,11 @@ import Profile from "./pages/admin/Profile";
 import Pickups from "./pages/admin/Pickups";
 
 import UserDashboard from "./pages/user/Dashboard";
+import UserProfile from "./pages/user/Profile";
+import TrackingUser from "./pages/user/TrackingUser";
+
 import CourierDashboard from "./pages/courier/Dashboard";
+import CourierProfile from "./pages/courier/Profile";
 
 function App() {
   return (
@@ -38,8 +42,12 @@ function App() {
       <Route path="/user" element={<UserDashboard />} />
       <Route path="/user/orders" element={<Orders />} />
       <Route path="/user/orders/create" element={<CreateOrder />} />
+      <Route path="/user/profile" element={<UserProfile />}/>
+      <Route path="/user/tracking" element={<TrackingUser/>} />
+
       {/* Courier */}
       <Route path="/courier" element={<CourierDashboard />} />
+      <Route path="/courier/profile" element={<CourierProfile />} />
     </Routes>
   );
 }

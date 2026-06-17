@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import BottomNav from "../../components/BottomNav";
+import BottomNav from "../../components/courier/BottomNav";
 import "./Dashboard.css";
 
 function Dashboard() {
@@ -32,7 +32,7 @@ return ( <div className="dashboard">
 
       <button
         className="nav-btn"
-        onClick={() => navigate("/profile")}
+        onClick={() => navigate("/courier/profile")}
       >
         👤
       </button>
@@ -97,46 +97,6 @@ return ( <div className="dashboard">
 
   </div>
 
-  {/* SHIPPING SERVICES */}
-  <h3 className="section-title">
-    Shipping Services
-  </h3>
-
-  <div className="service-grid">
-
-    <div
-      className="service-card"
-      onClick={() => navigate("/admin/orders/create")}
-    >
-      <h2>EZ</h2>
-      <p>Regular</p>
-    </div>
-
-    <div
-      className="service-card"
-      onClick={() => navigate("/admin/orders/create")}
-    >
-      <h2>DOC</h2>
-      <p>Document</p>
-    </div>
-
-    <div
-      className="service-card"
-      onClick={() => navigate("/admin/orders/create")}
-    >
-      <h2>JSD</h2>
-      <p>Same Day</p>
-    </div>
-
-    <div
-      className="service-card"
-      onClick={() => navigate("/admin/orders/create")}
-    >
-      <h2>JND</h2>
-      <p>Next Day</p>
-    </div>
-
-  </div>
 
   <BottomNav />
 

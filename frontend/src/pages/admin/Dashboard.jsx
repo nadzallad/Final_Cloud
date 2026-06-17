@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import BottomNav from "../../components/BottomNav";
+import BottomNav from "../../components/admin/BottomNav";
 import "./Dashboard.css";
 
 function Dashboard() {
