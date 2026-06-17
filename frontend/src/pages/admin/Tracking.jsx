@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./Tracking.css";
-import trackingService from "../services/trackingService";
+import trackingService from "../../services/trackingService";
 
 function Tracking() {
   const [formData, setFormData] = useState({

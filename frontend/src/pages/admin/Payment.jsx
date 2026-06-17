@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { createPayment } from "../services/paymentService";
+import { createPayment } from "../../services/paymentService";
 
 function Payment() {
 
@@ -134,7 +134,7 @@ function Payment() {
       <button
         onClick={() =>
           navigate(
-            "/orders/create"
+            "/admin/orders/create"
           )
         }
         style={{

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { getOrders } from "../services/orderService";
-import Navbar from "../components/Navbar";
-import api from "../services/api";
+import { getOrders } from "../../services/orderService";
+import Navbar from "../../components/Navbar";
+import api from "../../services/api";
 
 function Orders() {
   const [orders, setOrders] = useState([]);

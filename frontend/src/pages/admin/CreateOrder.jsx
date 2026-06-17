@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { createOrder } from "../services/orderService";
+import { createOrder } from "../../services/orderService";
 
 function CreateOrder() {
 
@@ -31,7 +31,6 @@ function CreateOrder() {
 
     service_type: "EZ",
 
-    payment_method: "TRANSFER"
   });
 
   useEffect(() => {
@@ -103,7 +102,7 @@ function CreateOrder() {
       })
     );
 
-    navigate("/payment");
+    navigate("/admin/payment");
 
   } catch (error) {
 

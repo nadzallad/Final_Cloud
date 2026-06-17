@@ -1,20 +1,20 @@
 import { useEffect, useState } from "react";
-import Navbar from "../components/Navbar";
-import BottomNav from "../components/BottomNav";
-import warehouseApi from "../services/warehouseApi";
+import Navbar from "../../components/Navbar";
+import BottomNav from "../../components/BottomNav";
+import pickupApi from "../../services/pickupApi";
 
-function Warehouse() {
-  const [logs, setLogs] = useState([]);
+function Pickups() {
+  const [pickups, setPickups] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadLogs();
+    loadPickups();
   }, []);
 
-  const loadLogs = async () => {
+  const loadPickups = async () => {
     try {
-      const res = await warehouseApi.get("/warehouse-logs");
-      setLogs(res.data || []);
+      const res = await pickupApi.get("/pickups");
+      setPickups(res.data || []);
     } catch (err) {
       console.log(err);
     } finally {
@@ -22,15 +22,15 @@ function Warehouse() {
     }
   };
 
-  const handleMarkOutForShipment = async (warehouseID) => {
+  const handleMarkPickedUp = async (pickupID) => {
     try {
-      await warehouseApi.patch(`/warehouse-logs/${warehouseID}/status`, {
-        status: "OUT_FOR_SHIPMENT",
+      await pickupApi.patch(`/pickups/${pickupID}/status`, {
+        status: "PICKED_UP",
       });
-      alert("Paket ditandai siap dikirim!");
-      loadLogs();
+      alert("Pickup ditandai sudah diambil!");
+      loadPickups();
     } catch (err) {
-      alert("Gagal update status warehouse");
+      alert("Gagal update status pickup");
     }
   };
 
@@ -38,12 +38,12 @@ function Warehouse() {
     <>
       <Navbar />
       <div style={{ padding: "20px" }}>
-        <h1>Warehouse</h1>
+        <h1>Pickup</h1>
 
         {loading ? (
           <p>Memuat data...</p>
-        ) : logs.length === 0 ? (
-          <p>Belum ada paket di gudang.</p>
+        ) : pickups.length === 0 ? (
+          <p>Belum ada pickup.</p>
         ) : (
           <table
             border="1"
@@ -55,46 +55,44 @@ function Warehouse() {
                 <th>ID</th>
                 <th>No Resi</th>
                 <th>User ID</th>
-                <th>Barang</th>
-                <th>Stock</th>
-                <th>Status</th>
+                <th>Berat</th>
+                <th>Status Bayar</th>
+                <th>Status Pickup</th>
                 <th>Dibuat</th>
                 <th>Aksi</th>
               </tr>
             </thead>
             <tbody>
-              {logs.map((l) => (
-                <tr key={l.warehouse_id}>
-                  <td>{l.warehouse_id}</td>
-                  <td>{l.tracking_number}</td>
-                  <td>{l.user_id}</td>
-                  <td>{l.item_name || "-"}</td>
-                  <td>{l.stock}</td>
+              {pickups.map((p) => (
+                <tr key={p.pickup_id}>
+                  <td>{p.pickup_id}</td>
+                  <td>{p.tracking_number}</td>
+                  <td>{p.user_id}</td>
+                  <td>{p.weight_kg} kg</td>
+                  <td>{p.payment_status}</td>
                   <td>
                     <span
                       style={{
                         padding: "4px 8px",
                         borderRadius: "4px",
                         backgroundColor:
-                          l.status === "OUT_FOR_SHIPMENT"
-                            ? "#27ae60"
-                            : "#e67e22",
+                          p.status === "PICKED_UP" ? "#27ae60" : "#e67e22",
                         color: "white",
                         fontSize: "12px",
                       }}
                     >
-                      {l.status}
+                      {p.status}
                     </span>
                   </td>
                   <td>
-                    {l.created_at
-                      ? new Date(l.created_at).toLocaleString("id-ID")
+                    {p.created_at
+                      ? new Date(p.created_at).toLocaleString("id-ID")
                       : "-"}
                   </td>
                   <td>
-                    {l.status === "IN_WAREHOUSE" && (
+                    {p.status === "WAITING_PICKUP" && (
                       <button
-                        onClick={() => handleMarkOutForShipment(l.warehouse_id)}
+                        onClick={() => handleMarkPickedUp(p.pickup_id)}
                         style={{
                           padding: "4px 8px",
                           backgroundColor: "#c0392b",
@@ -104,7 +102,7 @@ function Warehouse() {
                           cursor: "pointer",
                         }}
                       >
-                        Siap Kirim
+                        Tandai Diambil
                       </button>
                     )}
                   </td>
@@ -119,4 +117,4 @@ function Warehouse() {
   );
 }
 
-export default Warehouse;
+export default Pickups;

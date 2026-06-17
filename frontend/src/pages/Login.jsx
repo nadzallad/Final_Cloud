@@ -26,11 +26,19 @@ function Login() {
         form
       );
 
+      console.log("FULL RESPONSE:", response.data);
+
       const { token, user } = response.data;
+
+      console.log("TOKEN:", token);
+      console.log("USER:", user);
+      console.log("ROLE:", user.role);
 
       login(token, user.role);
 
-      alert("Login berhasil");
+      alert(
+        `Login berhasil sebagai ${user.role}`
+      );
 
       if (user.role === "admin") {
         window.location.href = "/admin";
@@ -39,10 +47,14 @@ function Login() {
       } else {
         window.location.href = "/user";
       }
+
     } catch (error) {
+
+      console.error(error);
+
       alert(
         error.response?.data?.message ||
-          "Email atau password salah"
+        "Email atau password salah"
       );
     }
   };
@@ -52,6 +64,7 @@ function Login() {
       <h2>Login</h2>
 
       <form onSubmit={handleSubmit}>
+
         <div>
           <input
             type="email"
@@ -77,6 +90,7 @@ function Login() {
         <button type="submit">
           Login
         </button>
+
       </form>
 
       <p>

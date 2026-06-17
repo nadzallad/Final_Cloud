@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { getAllShipments } from "../services/shipmentService";
-import Navbar from "../components/Navbar";
+import { getAllShipments } from "../../services/shipment";
+import Navbar from "../../components/Navbar";
 
 function Shipment() {
   const [shipments, setShipments] = useState([]);
