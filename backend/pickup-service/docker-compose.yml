@@ -33,6 +33,7 @@ services:
       DB_PASS: admin123
       DB_NAME: pickup_db
       ORDER_SERVICE_URL: http://order-service:8081
+      TRACKING_SERVICE_URL: http://tracking-service:8087
     depends_on:
       pickup_postgres:
         condition: service_healthy

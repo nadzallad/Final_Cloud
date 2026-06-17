@@ -34,6 +34,7 @@ services:
       DB_NAME: warehouse_db
       PICKUP_SERVICE_URL: http://pickup-service:8083
       ORDER_SERVICE_URL: http://order-service:8081
+      PAYMENT_SERVICE_URL: http://payment-service:8082
     depends_on:
       warehouse_postgres:
         condition: service_healthy
