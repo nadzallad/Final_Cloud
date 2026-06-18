@@ -1,0 +1,43 @@
+services:
+  delivery_postgres:
+    image: postgres:16
+    container_name: delivery_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Selikaknjm07
+      POSTGRES_DB: delivery_db
+    ports:
+      - "5437:5432"
+    volumes:
+      - delivery_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: delivery_rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  delivery-service:
+    build: .
+    container_name: delivery_service
+    ports:
+      - "8086:8086"
+    environment:
+      DB_HOST: delivery_postgres
+      DB_PASS: admin123
+      DB_NAME: delivery_db
+      ORDER_SERVICE_URL: http://order-service:8081
+    depends_on:
+      delivery_postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_started
+
+volumes:
+  delivery_pg_data:
