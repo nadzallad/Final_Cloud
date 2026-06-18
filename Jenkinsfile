@@ -24,7 +24,7 @@ pipeline {
         stage('Checkout Repo') {
             steps {
                 deleteDir()
-                git branch: 'main', url: 'https://github.com/nadzallad/Cloud_Final.git'
+                git branch: 'main', url: 'https://github.com/nadzallad/Final_Cloud.git'
             }
         }
         
