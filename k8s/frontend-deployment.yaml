@@ -15,5 +15,6 @@ spec:
       containers:
       - name: frontend
         image: nadzallafinalcloudacr.azurecr.io/frontend:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 80

@@ -73,6 +73,17 @@ func main() {
 			})
 		},
 	)
+	router.POST("/auth/login", func(c *gin.Context) {
+    c.JSON(200, gin.H{
+        "message": "login route found",
+    })
+})
+
+router.POST("/auth/register", func(c *gin.Context) {
+    c.JSON(200, gin.H{
+        "message": "register route found",
+    })
+})
 
 	router.Run(":8080")
 }
