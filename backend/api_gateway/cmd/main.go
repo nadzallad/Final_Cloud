@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bytes"
+	"io"
 	"net/http"
 
 	"api_gateway/middleware"
@@ -73,17 +75,62 @@ func main() {
 			})
 		},
 	)
-	router.POST("/auth/login", func(c *gin.Context) {
-    c.JSON(200, gin.H{
-        "message": "login route found",
-    })
+router.POST("/auth/login", func(c *gin.Context) {
+
+	body, err := io.ReadAll(c.Request.Body)
+	if err != nil {
+		c.JSON(500, gin.H{"message": err.Error()})
+		return
+	}
+
+	resp, err := http.Post(
+		"http://auth-service:5001/auth/login",
+		"application/json",
+		bytes.NewBuffer(body),
+	)
+
+	if err != nil {
+		c.JSON(500, gin.H{"message": err.Error()})
+		return
+	}
+	defer resp.Body.Close()
+
+	responseBody, _ := io.ReadAll(resp.Body)
+
+	c.Data(
+		resp.StatusCode,
+		"application/json",
+		responseBody,
+	)
 })
 
 router.POST("/auth/register", func(c *gin.Context) {
-    c.JSON(200, gin.H{
-        "message": "register route found",
-    })
-})
 
+	body, err := io.ReadAll(c.Request.Body)
+	if err != nil {
+		c.JSON(500, gin.H{"message": err.Error()})
+		return
+	}
+
+	resp, err := http.Post(
+		"http://auth-service:5001/auth/register",
+		"application/json",
+		bytes.NewBuffer(body),
+	)
+
+	if err != nil {
+		c.JSON(500, gin.H{"message": err.Error()})
+		return
+	}
+	defer resp.Body.Close()
+
+	responseBody, _ := io.ReadAll(resp.Body)
+
+	c.Data(
+		resp.StatusCode,
+		"application/json",
+		responseBody,
+	)
+})
 	router.Run(":8080")
 }
