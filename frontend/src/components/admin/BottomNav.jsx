@@ -48,6 +48,14 @@ function BottomNav() {
       </div>
 
       <div
+        className={location.pathname === "/admin/delivery" ? "nav-item active" : "nav-item"}
+        onClick={() => navigate("/admin/delivery")}
+      >
+        📬
+        <span>Delivery</span>
+      </div>
+
+      <div
         className={location.pathname === "/admin/tracking" ? "nav-item active" : "nav-item"}
         onClick={() => navigate("/admin/tracking")}
       >
