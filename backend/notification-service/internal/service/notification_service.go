@@ -2,10 +2,8 @@ package service
 
 import (
 	"time"
-
 	"notification-service/internal/entity"
 	"notification-service/internal/repository"
-
 	"github.com/google/uuid"
 )
 
