@@ -47,16 +47,6 @@ func (h *WarehouseHandler) GetLogs(c *gin.Context) {
 	c.JSON(http.StatusOK, logs)
 }
 
-func (h *WarehouseHandler) GetOverview(c *gin.Context) {
-	overview, err := h.service.GetOverview()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, overview)
-}
-
 func (h *WarehouseHandler) GetLogByID(c *gin.Context) {
 	idStr := c.Param("id")
 
