@@ -86,3 +86,33 @@ func (r *NotificationRepository) GetAll() ([]entity.Notification, error) {
 	return notifications, nil
 }
 
+<<<<<<< HEAD
+=======
+func (r *NotificationRepository) FindByUserID(
+	userID int,
+) ([]entity.Notification, error) {
+
+	filter := bson.M{
+		"user_id": userID,
+	}
+
+	cursor, err := r.collection.Find(
+		context.TODO(),
+		filter,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var notifications []entity.Notification
+
+	if err := cursor.All(
+		context.TODO(),
+		&notifications,
+	); err != nil {
+		return nil, err
+	}
+
+	return notifications, nil
+}
