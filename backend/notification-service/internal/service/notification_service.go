@@ -4,7 +4,6 @@ import (
 	"time"
 	"notification-service/internal/entity"
 	"notification-service/internal/repository"
-
 	"github.com/google/uuid"
 )
 
@@ -63,4 +62,3 @@ func (s *NotificationService) GetNotificationsByUserID(
 
 	return s.repo.FindByUserID(userID)
 }
-
