@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: warehouse-service
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: warehouse-service
+
+  template:
+    metadata:
+      labels:
+        app: warehouse-service
+
+    spec:
+      containers:
+      - name: warehouse-service
+        image: nadzallafinalcloudacr.azurecr.io/warehouse-service:latest
+
+        ports:
+        - containerPort: 8085
+
+---
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: warehouse-service
+
+spec:
+  selector:
+    app: warehouse-service
+
+  ports:
+  - port: 8085
+    targetPort: 8085
+
+  type: ClusterIP
