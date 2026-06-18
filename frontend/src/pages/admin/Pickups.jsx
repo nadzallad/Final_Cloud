@@ -90,7 +90,7 @@ function Pickups() {
                       : "-"}
                   </td>
                   <td>
-                    {p.status === "WAITING_PICKUP" && (
+                    {p.status === "WAITING_PICKUP" ? (
                       <button
                         onClick={() => handleMarkPickedUp(p.pickup_id)}
                         style={{
@@ -103,6 +103,19 @@ function Pickups() {
                         }}
                       >
                         Tandai Diambil
+                      </button>
+                    ) : (
+                      <button
+                        disabled
+                        style={{
+                          padding: "4px 8px",
+                          backgroundColor: "#27ae60",
+                          color: "white",
+                          border: "none",
+                          borderRadius: "4px",
+                        }}
+                      >
+                        ✔ Sudah Diambil
                       </button>
                     )}
                   </td>
