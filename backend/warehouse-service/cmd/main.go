@@ -27,7 +27,7 @@ func main() {
 	var publisher *rabbitmq.Publisher
 
 	// RabbitMQ
-	conn, err := amqp.Dial("amqp://guest:guest@rabbitmq:5672/")
+	conn, err := amqp.Dial("amqp://guest:guest@host.docker.internal:5672/")
 	if err != nil {
 		log.Println("Warning: RabbitMQ tidak tersedia:", err)
 	} else {
