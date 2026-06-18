@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"strconv"
 
 	"notification-service/internal/dto"
 	"notification-service/internal/entity"
@@ -143,3 +144,22 @@ func (h *NotificationHandler) NotificationStream(
 		c.Writer.Flush()
 	}
 }
+
+func (h *NotificationHandler) GetNotificationsByUserID(c *gin.Context) {
+	userIDStr := c.Param("user_id")
+	userID, err := strconv.Atoi(userIDStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid user_id"})
+		return
+	}
+
+	notifications, err := h.service.GetNotificationsByUserID(userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, notifications)
+}
+
+
