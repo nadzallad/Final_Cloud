@@ -2,7 +2,6 @@ package service
 
 import (
 	"time"
-
 	"notification-service/internal/entity"
 	"notification-service/internal/repository"
 
@@ -64,3 +63,4 @@ func (s *NotificationService) GetNotificationsByUserID(
 
 	return s.repo.FindByUserID(userID)
 }
+
