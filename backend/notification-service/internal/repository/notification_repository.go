@@ -85,3 +85,7 @@ func (r *NotificationRepository) GetAll() ([]entity.Notification, error) {
 
 	return notifications, nil
 }
+
+func (r *NotificationRepository) FindByUserID(
+    userID int,
+) ([]entity.Notification, error)
