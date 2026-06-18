@@ -14,6 +14,7 @@ pipeline {
         TRACKING_IMAGE = "${REGISTRY}/tracking-service:latest"
         NOTIFICATION_IMAGE = "${REGISTRY}/notification-service:latest"
         GATEWAY_IMAGE = "${REGISTRY}/api-gateway:latest"
+        FRONTEND_IMAGE = "${REGISTRY}/frontend:latest"
     }
 
     stages {
@@ -39,6 +40,7 @@ pipeline {
                 docker build -t $TRACKING_IMAGE ./backend/tracking-service
                 docker build -t $NOTIFICATION_IMAGE ./backend/notification-service
                 docker build -t $GATEWAY_IMAGE ./backend/api_gateway
+                docker build -t $FRONTEND_IMAGE ./frontend
                 '''
             }
         }
@@ -67,6 +69,7 @@ pipeline {
                     docker push $TRACKING_IMAGE
                     docker push $NOTIFICATION_IMAGE
                     docker push $GATEWAY_IMAGE
+                    docker push $FRONTEND_IMAGE
                     '''
                 }
             }
