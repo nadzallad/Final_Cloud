@@ -15,12 +15,16 @@ import Pickups from "./pages/admin/Pickups";
 import Delivery from "./pages/admin/Delivery";
 
 import UserDashboard from "./pages/user/Dashboard";
+import UserOrder from "./pages/user/Orders";
+import UserCreateOrder from "./pages/user/CreateOrder";
 import UserProfile from "./pages/user/Profile";
 import TrackingUser from "./pages/user/TrackingUser";
 
 import CourierDashboard from "./pages/courier/Dashboard";
 import CourierProfile from "./pages/courier/Profile";
+import CourierPickup from "./pages/courier/Pickup";
 import CourierDelivery from "./pages/courier/Delivery";
+import CourierTracking from "./pages/courier/Tracking";
 
 function App() {
   return (
@@ -43,15 +47,17 @@ function App() {
 
       {/* User */}
       <Route path="/user" element={<UserDashboard />} />
-      <Route path="/user/orders" element={<Orders />} />
-      <Route path="/user/orders/create" element={<CreateOrder />} />
+      <Route path="/user/order" element={<UserOrder />} />
+      <Route path="/user/order/create" element={<UserCreateOrder />} />
       <Route path="/user/profile" element={<UserProfile />}/>
       <Route path="/user/tracking" element={<TrackingUser/>} />
 
       {/* Courier */}
       <Route path="/courier" element={<CourierDashboard />} />
       <Route path="/courier/profile" element={<CourierProfile />} />
+      <Route path="/courier/pickup" element={<CourierPickup />} />
       <Route path="/courier/delivery" element={<CourierDelivery />} />
+      <Route path="/courier/tracking" element={<CourierTracking />} />
     </Routes>
   );
 }
