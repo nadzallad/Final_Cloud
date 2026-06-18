@@ -11,9 +11,9 @@ func SetupRoutes(router *gin.Engine, h *handler.ShipmentHandler) {
 	{
 		api.POST("/shipments", h.CreateShipment)
 		api.GET("/shipments", h.GetShipments)
-		api.GET("/shipments/:id", h.GetShipmentByID)
 		api.GET("/shipments/by-resi/:noResi", h.GetShipmentByNoResi)
 		api.GET("/shipments/by-tracking/:trackingID", h.GetShipmentByTrackingID)
+		api.GET("/shipments/:id", h.GetShipmentByID)
 		api.PATCH("/shipments/:id/status", h.UpdateShipmentStatus)
 	}
 }
