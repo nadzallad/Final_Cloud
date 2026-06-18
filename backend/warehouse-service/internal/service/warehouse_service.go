@@ -113,55 +113,6 @@ func (s *WarehouseService) GetAllLogs() ([]entity.WarehouseLog, error) {
 
 // OverviewResponse menggabungkan data dari order, payment, pickup, dan warehouse
 // supaya warehouse-service bisa berfungsi sebagai "command center" gudang.
-type OverviewResponse struct {
-	Orders         []map[string]interface{} `json:"orders"`
-	Payments       []map[string]interface{} `json:"payments"`
-	Pickups        []map[string]interface{} `json:"pickups"`
-	WarehouseLogs  []entity.WarehouseLog     `json:"warehouse_logs"`
-}
-
-// GetOverview mengambil data ringkasan dari order-service, payment-service,
-// dan pickup-service, digabung dengan data warehouse_logs milik service ini sendiri.
-// Jika salah satu service tujuan tidak bisa dihubungi atau formatnya tidak sesuai,
-// list untuk service itu dikembalikan sebagai array kosong (tidak menggagalkan request).
-func (s *WarehouseService) GetOverview() (*OverviewResponse, error) {
-	warehouseLogs, err := s.repo.FindAll()
-	if err != nil {
-		return nil, err
-	}
-
-	overview := &OverviewResponse{
-		Orders:        fetchListAsMaps(fmt.Sprintf("%s/api/orders", orderServiceURL())),
-		Payments:      fetchListAsMaps(fmt.Sprintf("%s/payments", paymentServiceURL())),
-		Pickups:       fetchListAsMaps(fmt.Sprintf("%s/api/pickups", pickupServiceURL())),
-		WarehouseLogs: warehouseLogs,
-	}
-
-	return overview, nil
-}
-
-// fetchListAsMaps melakukan GET ke url dan mencoba decode response sebagai
-// array of object. Jika gagal terhubung atau response bukan array, kembalikan
-// slice kosong (bukan nil) agar tetap aman di-marshal jadi JSON array di frontend.
-func fetchListAsMaps(url string) []map[string]interface{} {
-	result := []map[string]interface{}{}
-
-	resp, err := http.Get(url)
-	if err != nil {
-		return result
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return result
-	}
-
-	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
-		return []map[string]interface{}{}
-	}
-
-	return result
-}
 
 func (s *WarehouseService) GetLogByID(warehouseID int) (*entity.WarehouseLog, error) {
 	return s.repo.FindByID(warehouseID)
