@@ -7,7 +7,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strconv"
 
 	"pickup-service/internal/dto"
 	"pickup-service/internal/entity"
@@ -30,6 +29,7 @@ func NewPickupService(
 	}
 }
 
+// orderServiceURL mengembalikan base URL order-service, bisa di-override lewat env ORDER_SERVICE_URL
 func orderServiceURL() string {
 	url := os.Getenv("ORDER_SERVICE_URL")
 	if url == "" {
@@ -38,6 +38,7 @@ func orderServiceURL() string {
 	return url
 }
 
+// trackingServiceURL mengembalikan base URL tracking-service, bisa di-override lewat env TRACKING_SERVICE_URL
 func trackingServiceURL() string {
 	url := os.Getenv("TRACKING_SERVICE_URL")
 	if url == "" {
@@ -46,6 +47,7 @@ func trackingServiceURL() string {
 	return url
 }
 
+// trackingPayload merepresentasikan body yang dikirim ke POST /tracking milik tracking-service
 type trackingPayload struct {
 	TrackingID      string `json:"tracking_id"`
 	NoResi          string `json:"no_resi"`
@@ -54,7 +56,15 @@ type trackingPayload struct {
 	Note            string `json:"note"`
 }
 
+// sendTrackingUpdate mengirim update perjalanan paket ke tracking-service.
+// Dipanggil setiap kali status pickup berubah (dibuat maupun diambil kurir).
+// Kegagalan di sini tidak menggagalkan proses utama pickup, hanya di-log.
 func sendTrackingUpdate(noResi string, status string, note string) {
+
+	log.Println("========== SEND TRACKING UPDATE ==========")
+	log.Println("No Resi :", noResi)
+	log.Println("Status  :", status)
+
 	payload := trackingPayload{
 		TrackingID:      noResi,
 		NoResi:          noResi,
@@ -71,45 +81,56 @@ func sendTrackingUpdate(noResi string, status string, note string) {
 
 	url := fmt.Sprintf("%s/tracking", trackingServiceURL())
 
+	log.Println("POST URL :", url)
+
 	resp, err := http.Post(url, "application/json", bytes.NewBuffer(body))
+
 	if err != nil {
-		log.Println("Warning: gagal mengirim update ke tracking-service:", err)
+		log.Println("ERROR POST TRACKING :", err)
 		return
 	}
+
 	defer resp.Body.Close()
+
+	log.Println("TRACKING RESPONSE :", resp.Status)
 
 	if resp.StatusCode >= 300 {
 		log.Println("Warning: tracking-service mengembalikan status", resp.StatusCode)
 	}
 }
 
+// resiResponse merepresentasikan response dari GET /api/orders/:id/resi
 type resiResponse struct {
 	OrderID int    `json:"order_id"`
 	NoResi  string `json:"no_resi"`
 }
 
+// orderDetailResponse merepresentasikan response dari GET /api/orders/:id (opsional, kalau tersedia)
 type orderDetailResponse struct {
 	OrderID  int     `json:"order_id"`
 	UserID   int     `json:"user_id"`
 	WeightKg float64 `json:"weight_kg"`
 }
 
+// CreatePickupFromPayment dipanggil saat menerima event payment.success.
+// Mengambil no_resi (dan detail order jika tersedia) dari order-service,
+// lalu membuat record pickup baru dengan status WAITING_PICKUP.
 func (s *PickupService) CreatePickupFromPayment(orderID string) error {
+
 	noResi, err := fetchNoResi(orderID)
 	if err != nil {
 		return fmt.Errorf("gagal mengambil no_resi dari order-service: %v", err)
 	}
 
+	// Cek apakah pickup untuk no_resi ini sudah ada (hindari duplikat)
 	existing, _ := s.repo.FindByTrackingNumber(noResi)
 	if existing != nil {
 		return nil
 	}
 
-	orderIDInt, _ := strconv.Atoi(orderID)
 	userID, weightKg := fetchOrderDetail(orderID)
 
 	pickup := &entity.Pickup{
-		OrderID:        orderIDInt,
 		UserID:         userID,
 		TrackingNumber: noResi,
 		PaymentStatus:  "PAID",
@@ -126,6 +147,7 @@ func (s *PickupService) CreatePickupFromPayment(orderID string) error {
 	return nil
 }
 
+// CreatePickup membuat pickup secara manual (REST API biasa)
 func (s *PickupService) CreatePickup(req dto.CreatePickupRequest) (*entity.Pickup, error) {
 	pickup := &entity.Pickup{
 		UserID:         req.UserID,
@@ -156,6 +178,9 @@ func (s *PickupService) GetPickupByTrackingNumber(trackingNumber string) (*entit
 	return s.repo.FindByTrackingNumber(trackingNumber)
 }
 
+// UpdatePickupStatus mengubah status pickup. Jika status baru adalah PICKED_UP,
+// service ini akan publish event "pickup.completed" agar warehouse-service bisa
+// membuat record warehouse_logs.
 func (s *PickupService) UpdatePickupStatus(pickupID int, status string) (*entity.Pickup, error) {
 	pickup, err := s.repo.FindByID(pickupID)
 	if err != nil {
@@ -169,8 +194,7 @@ func (s *PickupService) UpdatePickupStatus(pickupID int, status string) (*entity
 	pickup.Status = status
 
 	if status == "PICKED_UP" && s.publisher != nil {
-		orderIDStr := strconv.Itoa(pickup.OrderID)
-		if err := s.publisher.PublishPickupCompleted(pickup.TrackingNumber, orderIDStr); err != nil {
+		if err := s.publisher.PublishPickupCompleted(pickup.TrackingNumber, ""); err != nil {
 			return nil, fmt.Errorf("gagal publish pickup.completed: %v", err)
 		}
 	}
@@ -207,6 +231,8 @@ func fetchNoResi(orderID string) (string, error) {
 	return data.NoResi, nil
 }
 
+// fetchOrderDetail mengambil user_id dan weight_kg dari order-service.
+// Jika endpoint belum tersedia, kembalikan nilai default (0, 0).
 func fetchOrderDetail(orderID string) (userID int, weightKg float64) {
 	url := fmt.Sprintf("%s/api/orders/%s", orderServiceURL(), orderID)
 
