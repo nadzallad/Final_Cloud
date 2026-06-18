@@ -11,6 +11,16 @@ func SetupRoutes(
 	notificationHandler *handler.NotificationHandler,
 ) {
 
+	router.GET(
+		"/notification/stream",
+		notificationHandler.NotificationStream,
+	)
+
+	router.GET(
+		"/notification/by-user/:user_id",
+		notificationHandler.GetNotificationsByUserID,
+	)
+	
 	router.POST(
 		"/notification",
 		notificationHandler.CreateNotification,
@@ -24,10 +34,5 @@ func SetupRoutes(
 	router.GET(
 		"/notification",
 		notificationHandler.GetNotifications,
-	)
-
-	router.GET(
-		"/notification/stream",
-		notificationHandler.NotificationStream,
 	)
 }	
