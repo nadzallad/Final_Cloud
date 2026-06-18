@@ -42,37 +42,151 @@ function Register() {
   };
 
   return (
-    <div>
-      <h2>Register</h2>
+    <div
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        background: "linear-gradient(135deg, #991b1b, #dc2626)",
+      }}
+    >
+      <div
+        style={{
+          width: "100%",
+          maxWidth: "400px",
+          background: "white",
+          padding: "40px",
+          borderRadius: "20px",
+          borderTop: "5px solid #dc2626",
+          boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
+        }}
+      >
+        <h1
+          style={{
+            textAlign: "center",
+            color: "#dc2626",
+            marginBottom: "10px",
+          }}
+        >
+          PaketBang!
+        </h1>
 
-      <form onSubmit={handleSubmit}>
+        <h4
+          style={{
+            textAlign: "center",
+            color: "#991b1b",
+            marginBottom: "10px",
+          }}
+        >
+          Kirim cepat, sampai tepat
+        </h4>
 
-        <input
-          type="text"
-          name="name"
-          placeholder="Nama"
-          onChange={handleChange}
-        />
+        <p
+          style={{
+            textAlign: "center",
+            color: "#666",
+            marginBottom: "30px",
+          }}
+        >
+          Buat akun baru untuk melanjutkan
+        </p>
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          onChange={handleChange}
-        />
+        <form onSubmit={handleSubmit}>
+          <div style={{ marginBottom: "15px" }}>
+            <input
+              type="text"
+              name="name"
+              placeholder="Nama Lengkap"
+              onChange={handleChange}
+              required
+              style={{
+                width: "100%",
+                padding: "14px",
+                borderRadius: "10px",
+                border: "1px solid #ddd",
+                fontSize: "15px",
+                outline: "none",
+              }}
+            />
+          </div>
 
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          onChange={handleChange}
-        />
+          <div style={{ marginBottom: "15px" }}>
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              onChange={handleChange}
+              required
+              style={{
+                width: "100%",
+                padding: "14px",
+                borderRadius: "10px",
+                border: "1px solid #ddd",
+                fontSize: "15px",
+                outline: "none",
+              }}
+            />
+          </div>
 
-        <button type="submit">
-          Register
-        </button>
+          <div style={{ marginBottom: "20px" }}>
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              onChange={handleChange}
+              required
+              style={{
+                width: "100%",
+                padding: "14px",
+                borderRadius: "10px",
+                border: "1px solid #ddd",
+                fontSize: "15px",
+                outline: "none",
+              }}
+            />
+          </div>
 
-      </form>
+          <button
+            type="submit"
+            style={{
+              width: "100%",
+              padding: "14px",
+              background: "#dc2626",
+              color: "white",
+              border: "none",
+              borderRadius: "10px",
+              fontSize: "16px",
+              fontWeight: "bold",
+              cursor: "pointer",
+              boxShadow: "0 4px 15px rgba(220,38,38,0.3)",
+            }}
+          >
+            Register
+          </button>
+        </form>
+
+        <p
+          style={{
+            textAlign: "center",
+            marginTop: "20px",
+            color: "#666",
+          }}
+        >
+          Sudah punya akun?
+          <a
+            href="/"
+            style={{
+              color: "#dc2626",
+              fontWeight: "bold",
+              textDecoration: "none",
+              marginLeft: "5px",
+            }}
+          >
+            Login
+          </a>
+        </p>
+      </div>
     </div>
   );
 }
