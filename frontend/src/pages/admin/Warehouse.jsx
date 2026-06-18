@@ -37,24 +37,18 @@ function StatusBadge({ value, successValues }) {
 }
 
 function Warehouse() {
-  const [orders, setOrders] = useState([]);
-  const [payments, setPayments] = useState([]);
-  const [pickups, setPickups] = useState([]);
   const [warehouseLogs, setWarehouseLogs] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadOverview();
-  }, []);
+    loadWarehouseLogs();
+}, []);
 
-  const loadOverview = async () => {
+  const loadWarehouseLogs = async () => {
     try {
-      const res = await warehouseApi.get("/warehouse/overview");
-      const data = res.data || {};
-      setOrders(data.orders || []);
-      setPayments(data.payments || []);
-      setPickups(data.pickups || []);
-      setWarehouseLogs(data.warehouse_logs || []);
+      const res = await warehouseApi.get("/warehouse-logs");
+
+      setWarehouseLogs(res.data || []);
     } catch (err) {
       console.log(err);
     } finally {
@@ -68,7 +62,7 @@ function Warehouse() {
         status: "OUT_FOR_SHIPMENT",
       });
       alert("Paket ditandai siap dikirim!");
-      loadOverview();
+      loadWarehouseLogs();
     } catch (err) {
       alert("Gagal update status warehouse");
     }
@@ -91,118 +85,12 @@ function Warehouse() {
     <>
       <Navbar />
       <div style={{ padding: "20px" }}>
+
         <h1>Warehouse</h1>
+        
         <p style={{ color: "#666" }}>
-          Ringkasan data dari seluruh tahap pengiriman (order, payment, pickup,
-          dan gudang).
+          Data paket yang berada di gudang.
         </p>
-
-        <h2 style={sectionTitleStyle}>📦 Orders</h2>
-        {orders.length === 0 ? (
-          <p>Belum ada data order.</p>
-        ) : (
-          <div style={{ overflowX: "auto" }}>
-            <table border="1" cellPadding="10" style={tableStyle}>
-              <thead style={theadStyle}>
-                <tr>
-                  <th>Order ID</th>
-                  <th>Pengirim</th>
-                  <th>Penerima</th>
-                  <th>Barang</th>
-                  <th>Total</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {orders.map((o, i) => (
-                  <tr key={o.order_id ?? i}>
-                    <td>{o.order_id}</td>
-                    <td>{o.sender_name}</td>
-                    <td>{o.receiver_name}</td>
-                    <td>{o.item_name}</td>
-                    <td>{o.total_price}</td>
-                    <td>
-                      <StatusBadge
-                        value={o.status}
-                        successValues={["DELIVERED", "PAID"]}
-                      />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-
-        <h2 style={sectionTitleStyle}>💳 Payments</h2>
-        {payments.length === 0 ? (
-          <p>
-            Belum ada data payment (endpoint list payment mungkin belum
-            tersedia di payment-service).
-          </p>
-        ) : (
-          <div style={{ overflowX: "auto" }}>
-            <table border="1" cellPadding="10" style={tableStyle}>
-              <thead style={theadStyle}>
-                <tr>
-                  <th>Payment ID</th>
-                  <th>Order ID</th>
-                  <th>Metode</th>
-                  <th>Total</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {payments.map((p, i) => (
-                  <tr key={p.payment_id ?? i}>
-                    <td>{p.payment_id}</td>
-                    <td>{p.order_id}</td>
-                    <td>{p.payment_method}</td>
-                    <td>{p.total}</td>
-                    <td>
-                      <StatusBadge value={p.status} successValues={["PAID"]} />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-
-        <h2 style={sectionTitleStyle}>🛎️ Pickups</h2>
-        {pickups.length === 0 ? (
-          <p>Belum ada data pickup.</p>
-        ) : (
-          <div style={{ overflowX: "auto" }}>
-            <table border="1" cellPadding="10" style={tableStyle}>
-              <thead style={theadStyle}>
-                <tr>
-                  <th>Pickup ID</th>
-                  <th>No Resi</th>
-                  <th>User ID</th>
-                  <th>Berat</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {pickups.map((p, i) => (
-                  <tr key={p.pickup_id ?? i}>
-                    <td>{p.pickup_id}</td>
-                    <td>{p.tracking_number}</td>
-                    <td>{p.user_id}</td>
-                    <td>{p.weight_kg} kg</td>
-                    <td>
-                      <StatusBadge
-                        value={p.status}
-                        successValues={["PICKED_UP"]}
-                      />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
 
         <h2 style={sectionTitleStyle}>🏭 Warehouse Logs</h2>
         {warehouseLogs.length === 0 ? (
