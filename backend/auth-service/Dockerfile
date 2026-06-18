@@ -1,22 +1,13 @@
-FROM golang:1.25-alpine AS builder
+FROM node:22-alpine
 
 WORKDIR /app
 
-COPY go.mod ./
-COPY go.sum* ./
+COPY package*.json ./
 
-RUN go mod download 2>/dev/null || true
+RUN npm install
 
 COPY . .
 
-RUN go mod tidy && go build -o auth-service ./cmd/main.go
-
-FROM alpine:latest
-
-WORKDIR /app
-
-COPY --from=builder /app/auth-service .
-
 EXPOSE 5001
 
-CMD ["./auth-service"]
+CMD ["node", "server.js"]
