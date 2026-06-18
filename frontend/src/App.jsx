@@ -12,6 +12,7 @@ import Warehouse from "./pages/admin/Warehouse";
 import Shipment from "./pages/admin/Shipment";
 import Profile from "./pages/admin/Profile";
 import Pickups from "./pages/admin/Pickups";
+import Delivery from "./pages/admin/Delivery";
 
 import UserDashboard from "./pages/user/Dashboard";
 import UserProfile from "./pages/user/Profile";
@@ -19,6 +20,7 @@ import TrackingUser from "./pages/user/TrackingUser";
 
 import CourierDashboard from "./pages/courier/Dashboard";
 import CourierProfile from "./pages/courier/Profile";
+import CourierDelivery from "./pages/courier/Delivery";
 
 function App() {
   return (
@@ -37,6 +39,7 @@ function App() {
       <Route path="/admin/shipment" element={<Shipment />} />
       <Route path="/admin/profile" element={<Profile />} />
       <Route path="/admin/pickups" element={<Pickups />} />
+      <Route path="/admin/delivery" element={<Delivery />} />
 
       {/* User */}
       <Route path="/user" element={<UserDashboard />} />
@@ -48,6 +51,7 @@ function App() {
       {/* Courier */}
       <Route path="/courier" element={<CourierDashboard />} />
       <Route path="/courier/profile" element={<CourierProfile />} />
+      <Route path="/courier/delivery" element={<CourierDelivery />} />
     </Routes>
   );
 }
