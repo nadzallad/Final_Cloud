@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Navbar from "../../components/Navbar";
-import BottomNav from "../../components/BottomNav";
+import BottomNav from "../../components/admin/BottomNav";
 import pickupApi from "../../services/pickupApi";
 
 function Pickups() {
