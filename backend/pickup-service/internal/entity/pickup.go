@@ -4,6 +4,7 @@ import "time"
 
 type Pickup struct {
 	PickupID       int       `gorm:"column:pickup_id;primaryKey;autoIncrement" json:"pickup_id"`
+	OrderID        int       `gorm:"column:order_id" json:"order_id"`
 	UserID         int       `gorm:"column:user_id" json:"user_id"`
 	TrackingNumber string    `gorm:"column:tracking_number;unique" json:"tracking_number"`
 	PaymentStatus  string    `gorm:"column:payment_status" json:"payment_status"`

@@ -14,12 +14,14 @@ return ( <div className="dashboard">
     <div className="navbar-left">
 
       <div className="logo-circle">
-        🚚
+        📦
       </div>
 
       <div>
-        <h3>LogiTrack</h3>
-        <p>Fast Delivery Service</p>
+        <h2 className="brand-name">PaketBang!</h2>
+        <p className="brand-tagline">
+          Kirim Cepat, Sampai Tepat 
+        </p>
       </div>
 
     </div>
@@ -41,24 +43,38 @@ return ( <div className="dashboard">
 
   </div>
 
-  {/* TRACKING SEARCH */}
-  <div className="search-box">
-
-    <input
-      type="text"
-      placeholder="🔍 Track Waybill"
-    />
-
-  </div>
 
   {/* HERO BANNER */}
   <div className="hero-banner">
 
-    <h2>Fast & Reliable Logistics</h2>
+    <div className="hero-content">
 
-    <p>
-      Create orders and track shipments easily
-    </p>
+      <span className="hero-badge">
+        🚀 Delivery Service #1
+      </span>
+
+      <h1>
+        PaketBang!
+      </h1>
+
+      <h2>
+        Kirim Cepat,<br />
+        Sampai Tepat
+      </h2>
+
+      <p>
+        Solusi pengiriman modern untuk kebutuhan bisnis dan pribadi.
+        Buat pesanan dan lacak paket dengan mudah, cepat, dan aman.
+      </p>
+
+      <button
+        className="hero-btn"
+        onClick={() => navigate("/orders/create")}
+      >
+        📦 Kirim Paket Sekarang
+      </button>
+
+    </div>
 
   </div>
 

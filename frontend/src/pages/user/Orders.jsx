@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { getOrders } from "../../services/orderService";
 import Navbar from "../../components/Navbar";
 import api from "../../services/api";
+import BottomNav from "../../components/user/BottomNav";
 
 function Orders() {
   const [orders, setOrders] = useState([]);
@@ -114,6 +115,7 @@ function Orders() {
             </tbody>
           </table>
         )}
+        <BottomNav />
       </div>
     </>
   );

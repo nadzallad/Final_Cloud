@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { createOrder } from "../../services/orderService";
+import BottomNav from "../../components/user/BottomNav";
+import Navbar from "../../components/Navbar";
 
 function CreateOrder() {
 
@@ -117,8 +119,19 @@ function CreateOrder() {
 };
 
   return (
+    <>
+    <Navbar />
 
-    <div className="form-container">
+    <div
+      className="form-container"
+      style={{
+        maxWidth: "900px",
+        margin: "0 auto",
+        padding: "30px",
+        marginTop: "100px",
+        marginBottom: "120px",
+      }}
+    >
 
       <h1>Create Order</h1>
 
@@ -324,7 +337,8 @@ function CreateOrder() {
       </form>
 
     </div>
-
+    <BottomNav />
+    </>
   );
 }
 

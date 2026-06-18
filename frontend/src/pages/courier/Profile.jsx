@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import BottomNav from "../../components/courier/BottomNav";
 
 function Profile() {
   const navigate = useNavigate();
@@ -28,7 +29,7 @@ function Profile() {
   };
 
   const getRoleColor = () => {
-    if (user.role === "admin") {
+    if (user.role === "courier") {
       return "#e74c3c";
     }
 
@@ -45,6 +46,7 @@ function Profile() {
         minHeight: "100vh",
         background: "#f5f6fa",
         padding: "30px",
+        paddingBottom: "120px", 
       }}
     >
       <div
@@ -165,6 +167,10 @@ function Profile() {
           </button>
         </div>
       </div>
+<>
+
+  <BottomNav />
+</>
     </div>
   );
 }

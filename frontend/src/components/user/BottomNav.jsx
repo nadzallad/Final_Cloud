@@ -21,12 +21,12 @@ function BottomNav() {
 
       <div
         className={
-          location.pathname === "/user/orders/create"
+          location.pathname === "/user/order/create"
             ? "nav-item active"
             : "nav-item"
         }
         onClick={() =>
-          navigate("/user/orders/create")
+          navigate("/user/order/create")
         }
       >
         📦
@@ -35,12 +35,12 @@ function BottomNav() {
 
       <div
         className={
-          location.pathname === "/user/orders"
+          location.pathname === "/user/order"
             ? "nav-item active"
             : "nav-item"
         }
         onClick={() =>
-          navigate("/user/orders")
+          navigate("/user/order")
         }
       >
         📋

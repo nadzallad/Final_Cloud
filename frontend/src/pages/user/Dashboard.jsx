@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import Navbar from "../../components/Navbar";
 import BottomNav from "../../components/user/BottomNav";
 import "./Dashboard.css";
 
@@ -6,20 +7,23 @@ function Dashboard() {
 const navigate = useNavigate();
 
 return ( <div className="dashboard">
+  <>
+  <Navbar />
 
-```
   {/* HEADER */}
   <div className="navbar">
 
     <div className="navbar-left">
 
       <div className="logo-circle">
-        🚚
+        📦
       </div>
 
       <div>
-        <h3>LogiTrack</h3>
-        <p>Fast Delivery Service</p>
+        <h2 className="brand-name">PaketBang!</h2>
+        <p className="brand-tagline">
+          Kirim Cepat, Sampai Tepat 
+        </p>
       </div>
 
     </div>
@@ -41,24 +45,31 @@ return ( <div className="dashboard">
 
   </div>
 
-  {/* TRACKING SEARCH */}
-  <div className="search-box">
-
-    <input
-      type="text"
-      placeholder="🔍 Track Waybill"
-    />
-
-  </div>
 
   {/* HERO BANNER */}
   <div className="hero-banner">
 
-    <h2>Fast & Reliable Logistics</h2>
+    <div className="hero-content">
 
-    <p>
-      Create orders and track shipments easily
-    </p>
+      <span className="hero-badge">
+        Delivery Service #1
+      </span>
+
+      <h1>
+        PaketBang!
+      </h1>
+
+      <h2>
+        Kirim Cepat,<br />
+        Sampai Tepat
+      </h2>
+
+      <p>
+        Solusi pengiriman modern untuk kebutuhan bisnis dan pribadi.
+        Buat pesanan dan lacak paket dengan mudah, cepat, dan aman.
+      </p>
+
+    </div>
 
   </div>
 
@@ -78,13 +89,13 @@ return ( <div className="dashboard">
       <span>Create Order</span>
     </div>
 
-
     <div
       className="action-card"
-      onClick={() => navigate("/tracking-user")}
+      onClick={() => navigate("/user/tracking")}
     >
-      <div className="icon">📦</div>
-      <span>Track</span>
+      <div className="icon">🚚</div>
+
+      <span>Track Paket</span>
     </div>
 
   </div>
@@ -131,6 +142,7 @@ return ( <div className="dashboard">
   </div>
 
   <BottomNav />
+  </>
 
 </div>
 

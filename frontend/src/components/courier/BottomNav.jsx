@@ -21,26 +21,14 @@ function BottomNav() {
 
       <div
         className={
-          location.pathname === "/courier/pickups"
+          location.pathname === "/courier/pickup"
             ? "nav-item active"
             : "nav-item"
         }
-        onClick={() => navigate("/courier/pickups")}
+        onClick={() => navigate("/courier/pickup")}
       >
         🛎️
         <span>Pickup</span>
-      </div>
-
-      <div
-        className={
-          location.pathname === "/courier/shipment"
-            ? "nav-item active"
-            : "nav-item"
-        }
-        onClick={() => navigate("/courier/shipment")}
-      >
-        🚛
-        <span>Shipment</span>
       </div>
 
       <div
@@ -53,6 +41,18 @@ function BottomNav() {
       >
         🚚
         <span>Delivery</span>
+      </div>
+
+      <div
+        className={
+          location.pathname === "/courier/tracking"
+            ? "nav-item active"
+            : "nav-item"
+        }
+        onClick={() => navigate("/courier/tracking")}
+      >
+        🚚
+        <span>Tracking</span>
       </div>
       
       <div

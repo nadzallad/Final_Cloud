@@ -1,6 +1,6 @@
 import { useState } from "react";
 import trackingService from "../../services/trackingService";
-import BottomNav from "../../components/admin/BottomNav";
+import BottomNav from "../../components/courier/BottomNav";
 import Navbar from "../../components/Navbar";
 
 // ───────────────── STATUS BADGE ─────────────────
