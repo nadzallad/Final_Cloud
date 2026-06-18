@@ -22,7 +22,7 @@ function Login() {
 
     try {
       const response = await axios.post(
-        "http://localhost:5001/auth/login",
+        "http://20.249.145.91:8080/auth/login",
         form
       );
 

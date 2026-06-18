@@ -24,7 +24,7 @@ function Register() {
     try {
 
       await axios.post(
-        "http://localhost:5001/auth/register",
+        "http://20.249.145.91:8080/auth/register",
         form
       );
 
