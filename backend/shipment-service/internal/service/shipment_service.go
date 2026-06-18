@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"time"
+	"bytes"
 
 	"shipment-service/internal/dto"
 	"shipment-service/internal/entity"
@@ -158,13 +159,18 @@ func (s *ShipmentService) GetShipmentByTrackingID(trackingID string) (*entity.Sh
 
 // UpdateShipmentStatus - update status dan lokasi terkini
 // Jika status jadi DELIVERED, publish event shipment.delivered
-func (s *ShipmentService) UpdateShipmentStatus(id int, status string, currentLocation string) (*entity.Shipment, error) {
-	shipment, err := s.repo.FindByID(id)
+func (s *ShipmentService) UpdateShipmentStatus(
+	noResi string,
+	status string,
+	currentLocation string,
+) (*entity.Shipment, error) {
+
+	shipment, err := s.repo.FindByNoResi(noResi)
 	if err != nil {
 		return nil, fmt.Errorf("shipment tidak ditemukan")
 	}
 
-	if err := s.repo.UpdateStatus(id, status, currentLocation); err != nil {
+	if err := s.repo.UpdateStatus(shipment.ShipmentID, status, currentLocation); err != nil {
 		return nil, err
 	}
 
@@ -173,9 +179,36 @@ func (s *ShipmentService) UpdateShipmentStatus(id int, status string, currentLoc
 		shipment.CurrentLocation = currentLocation
 	}
 
+	tracking := map[string]interface{}{
+		"no_resi": shipment.NoResi,
+		"status": status,
+		"location": currentLocation,
+		"note": "Status diperbarui",
+	}
+
+	body, _ := json.Marshal(tracking)
+
+	resp, err := http.Post(
+		"http://localhost:8087/tracking",
+		"application/json",
+		bytes.NewBuffer(body),
+	)
+
+	if err != nil {
+		fmt.Println("Gagal kirim tracking:", err)
+	} else {
+		fmt.Println("Status tracking:", resp.Status)
+	}
+
 	if status == "DELIVERED" && s.publisher != nil {
-		if err := s.publisher.PublishShipmentDelivered(shipment.NoResi, shipment.TrackingID); err != nil {
-			return nil, fmt.Errorf("gagal publish shipment.delivered: %v", err)
+		if err := s.publisher.PublishShipmentDelivered(
+			shipment.NoResi,
+			shipment.TrackingID,
+		); err != nil {
+			return nil, fmt.Errorf(
+				"gagal publish shipment.delivered: %v",
+				err,
+			)
 		}
 	}
 

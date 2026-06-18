@@ -84,12 +84,8 @@ func (h *ShipmentHandler) GetShipmentByTrackingID(c *gin.Context) {
 }
 
 func (h *ShipmentHandler) UpdateShipmentStatus(c *gin.Context) {
-	idStr := c.Param("id")
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid shipment id"})
-		return
-	}
+
+	noResi := c.Param("noResi")
 
 	var req dto.UpdateShipmentStatusRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -97,9 +93,15 @@ func (h *ShipmentHandler) UpdateShipmentStatus(c *gin.Context) {
 		return
 	}
 
-	shipment, err := h.service.UpdateShipmentStatus(id, req.Status, req.CurrentLocation)
+	shipment, err := h.service.UpdateShipmentStatus(
+		noResi,
+		req.Status,
+		req.CurrentLocation,
+	)
+
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError,
+			gin.H{"error": err.Error()})
 		return
 	}
 

@@ -17,7 +17,7 @@ func ConnectDB() *gorm.DB {
 	}
 	password := os.Getenv("DB_PASS")
 	if password == "" {
-		password = "Selikaknjm07"
+		password = "admin123"
 	}
 	dbname := os.Getenv("DB_NAME")
 	if dbname == "" {
