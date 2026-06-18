@@ -57,3 +57,10 @@ func (s *NotificationService) GetAllNotifications() (
 ) {
 	return s.repo.GetAll()
 }
+
+func (s *NotificationService) GetNotificationsByUserID(
+	userID int,
+) ([]entity.Notification, error) {
+
+	return s.repo.FindByUserID(userID)
+}
