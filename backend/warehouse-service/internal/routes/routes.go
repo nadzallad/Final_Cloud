@@ -13,6 +13,5 @@ func SetupRoutes(router *gin.Engine, warehouseHandler *handler.WarehouseHandler)
 		api.GET("/warehouse-logs", warehouseHandler.GetLogs)
 		api.GET("/warehouse-logs/:id", warehouseHandler.GetLogByID)
 		api.PATCH("/warehouse-logs/:id/status", warehouseHandler.UpdateLogStatus)
-		api.GET("/warehouse/overview", warehouseHandler.GetOverview)
 	}
 }
