@@ -1,4 +1,12 @@
 services:
+  tracking-service:
+    build: .
+    container_name: tracking_service
+    ports:
+      - "8087:8087"
+    depends_on:
+      - mongodb
+
   mongodb:
     image: mongo:latest
     container_name: tracking_mongodb
