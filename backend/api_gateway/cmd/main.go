@@ -1,6 +1,6 @@
 package main
 
-import (
+import (kubectl exec deployment/api-gateway -- wget -qO- --post-data='' http://localhost:8080/auth/login
 	"bytes"
 	"io"
 	"net/http"
