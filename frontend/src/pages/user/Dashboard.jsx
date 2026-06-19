@@ -82,7 +82,7 @@ return ( <div className="dashboard">
 
     <div
       className="action-card"
-      onClick={() => navigate("/user/orders/create")}
+      onClick={() => navigate("/user/order/create")}
     >
       <div className="icon">📦</div>
 
@@ -109,7 +109,7 @@ return ( <div className="dashboard">
 
     <div
       className="service-card"
-      onClick={() => navigate("/user/orders/create")}
+      onClick={() => navigate("/user/order/create")}
     >
       <h2>EZ</h2>
       <p>Regular</p>
@@ -117,7 +117,7 @@ return ( <div className="dashboard">
 
     <div
       className="service-card"
-      onClick={() => navigate("/user/orders/create")}
+      onClick={() => navigate("/user/order/create")}
     >
       <h2>DOC</h2>
       <p>Document</p>
@@ -125,7 +125,7 @@ return ( <div className="dashboard">
 
     <div
       className="service-card"
-      onClick={() => navigate("/user/orders/create")}
+      onClick={() => navigate("/user/order/create")}
     >
       <h2>JSD</h2>
       <p>Same Day</p>
@@ -133,7 +133,7 @@ return ( <div className="dashboard">
 
     <div
       className="service-card"
-      onClick={() => navigate("/user/orders/create")}
+      onClick={() => navigate("/user/order/create")}
     >
       <h2>JND</h2>
       <p>Next Day</p>
