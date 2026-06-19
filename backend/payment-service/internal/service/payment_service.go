@@ -114,7 +114,7 @@ func (s *PaymentService) MarkAsPaid(
 	}
 
 	url := fmt.Sprintf(
-		"http://localhost:8081/api/orders/%s/confirm-payment",
+		"http://20.249.145.91:8080/api/orders/%s/confirm-payment",
 		orderID,
 	)
 

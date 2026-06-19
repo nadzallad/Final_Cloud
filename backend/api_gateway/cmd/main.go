@@ -132,5 +132,18 @@ router.POST("/auth/register", func(c *gin.Context) {
 		responseBody,
 	)
 })
+
+router.GET("/api/orders", func(c *gin.Context) {
+    c.JSON(200, gin.H{
+        "message": "orders route found",
+    })
+})
+
+router.POST("/api/orders", func(c *gin.Context) {
+    c.JSON(200, gin.H{
+        "message": "create order route found",
+    })
+})
+
 	router.Run(":8080")
 }

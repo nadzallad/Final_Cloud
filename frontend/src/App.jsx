@@ -17,6 +17,7 @@ import Delivery from "./pages/admin/Delivery";
 import UserDashboard from "./pages/user/Dashboard";
 import UserOrder from "./pages/user/Orders";
 import UserCreateOrder from "./pages/user/CreateOrder";
+import UserPayment from "./pages/user/Payment";
 import UserProfile from "./pages/user/Profile";
 import TrackingUser from "./pages/user/TrackingUser";
 
@@ -48,7 +49,8 @@ function App() {
       {/* User */}
       <Route path="/user" element={<UserDashboard />} />
       <Route path="/user/order" element={<UserOrder />} />
-      <Route path="/user/order/create" element={<UserCreateOrder />} />
+      <Route path="/user/orders/create" element={<UserCreateOrder />} />
+      <Route path="/user/payment" element={<UserPayment />} />
       <Route path="/user/profile" element={<UserProfile />}/>
       <Route path="/user/tracking" element={<TrackingUser/>} />
 

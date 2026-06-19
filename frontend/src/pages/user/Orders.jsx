@@ -16,11 +16,11 @@ function Orders() {
       const res = await getOrders();
       const ordersData = res.data;
 
-      // fetch resi untuk setiap order
+      // Fetch resi untuk setiap order dengan prefix /api yang benar
       const ordersWithResi = await Promise.all(
         ordersData.map(async (order) => {
           try {
-            const resiRes = await api.get(`/orders/${order.order_id}/resi`);
+            const resiRes = await api.get(`/api/orders/${order.order_id}/resi`);
             return { ...order, no_resi: resiRes.data.no_resi };
           } catch {
             return { ...order, no_resi: "-" };
@@ -36,7 +36,8 @@ function Orders() {
 
   const handleConfirmPayment = async (orderID) => {
     try {
-      await api.post(`/orders/${orderID}/confirm-payment`);
+      // Ditambahkan prefix /api sesuai konfigurasi base URL opsi 2
+      await api.post(`/api/orders/${orderID}/confirm-payment`);
       alert("Payment dikonfirmasi! Resi sedang dibuat...");
       loadOrders();
     } catch (err) {
