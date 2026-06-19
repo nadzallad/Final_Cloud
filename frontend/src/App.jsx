@@ -36,8 +36,8 @@ function App() {
 
       {/* Admin */}
       <Route path="/admin" element={<AdminDashboard />} />
-      <Route path="/admin/orders" element={<Orders />} />
-      <Route path="/admin/orders/create" element={<CreateOrder />} />
+      <Route path="/admin/order" element={<Orders />} />
+      <Route path="/admin/order/create" element={<CreateOrder />} />
       <Route path="/admin/payment" element={<Payment />} />
       <Route path="/admin/tracking" element={<Tracking />} />
       <Route path="/admin/warehouse" element={<Warehouse />} />
@@ -49,7 +49,7 @@ function App() {
       {/* User */}
       <Route path="/user" element={<UserDashboard />} />
       <Route path="/user/order" element={<UserOrder />} />
-      <Route path="/user/orders/create" element={<UserCreateOrder />} />
+      <Route path="/user/order/create" element={<UserCreateOrder />} />
       <Route path="/user/payment" element={<UserPayment />} />
       <Route path="/user/profile" element={<UserProfile />}/>
       <Route path="/user/tracking" element={<TrackingUser/>} />
